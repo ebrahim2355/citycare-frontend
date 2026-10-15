@@ -1,4 +1,3 @@
-import "server-only";
 import { decodeJwt, jwtVerify } from "jose";
 import type { NextResponse } from "next/server";
 import { callBackend, type ClientInfo } from "@/lib/server/backend";
