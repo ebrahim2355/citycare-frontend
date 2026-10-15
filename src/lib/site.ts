@@ -7,5 +7,4 @@ export const SITE = {
   url: (process.env.NEXT_PUBLIC_SITE_URL || (vercelUrl ? `https://${vercelUrl}` : "http://localhost:3000")).replace(/\/$/, ""),
   apiDocsUrl: "https://citycare-backend.vercel.app/api/v1/docs",
   city: "Dhaka",
-  supportEmail: "web.ebrahimali@gmail.com",
 };
