@@ -65,14 +65,13 @@ export const formatHours = (hours: number | null | undefined) => {
     return `${Math.max(1, Math.round(hours * 60))} min`;
   }
 
-  if (hours < 48) {
+  if (hours < 24) {
     return `${Number(hours.toFixed(1))} h`;
   }
 
-  const days = Math.floor(hours / 24);
-  const rest = Math.round(hours % 24);
+  const days = Number((hours / 24).toFixed(1));
 
-  return rest ? `${days}d ${rest}h` : `${days} days`;
+  return `${days} ${days === 1 ? "day" : "days"}`;
 };
 
 export const formatSla = (hours: number) => (hours % 24 === 0 ? `${hours / 24} day${hours === 24 ? "" : "s"}` : `${hours} hours`);
