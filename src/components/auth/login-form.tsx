@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { GoogleButton } from "@/components/auth/google-button";
 import { PasswordField, TextField } from "@/components/forms/form-fields";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
@@ -27,6 +28,7 @@ const describeError = (error: unknown) => {
 export function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
+  const googleError = searchParams.get("error");
   const [demoRole, setDemoRole] = useState<DemoAccount["role"] | null>(null);
   const signIn = useSignIn("login");
 
@@ -53,7 +55,7 @@ export function LoginForm() {
   };
 
   const busy = signIn.isPending || signIn.isSuccess;
-  const rootError = form.formState.errors.root?.message ?? null;
+  const rootError = form.formState.errors.root?.message ?? (googleError ? `Google sign in failed. ${googleError}` : null);
 
   return (
     <div className="space-y-7">
@@ -76,6 +78,7 @@ export function LoginForm() {
           {signIn.isPending && !demoRole ? <Spinner /> : <LogIn data-icon="inline-start" />}
           Sign in
         </Button>
+        <GoogleButton redirect={redirect} />
       </form>
 
       <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase" aria-hidden>
