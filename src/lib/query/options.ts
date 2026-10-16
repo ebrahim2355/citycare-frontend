@@ -34,6 +34,7 @@ export const queryKeys = {
   complaints: ["complaints"] as const,
   complaintList: (filters: ComplaintFilters) => ["complaints", "list", filters] as const,
   complaint: (id: string) => ["complaints", "detail", id] as const,
+  recentComplaints: ["complaints", "recent"] as const,
   tracking: (code: string) => ["tracking", code] as const,
   payments: ["payments"] as const,
   paymentList: (filters: PaymentFilters) => ["payments", "list", filters] as const,
@@ -64,6 +65,11 @@ export const complaintQueries = {
       queryKey: queryKeys.complaintList(filters),
       queryFn: () => fetcher.list<ComplaintListItem>("/complaints", { ...filters, limit: PAGE_SIZE }),
       placeholderData: keepPreviousData,
+    }),
+  recent: (fetcher: Fetcher = clientFetcher) =>
+    queryOptions({
+      queryKey: queryKeys.recentComplaints,
+      queryFn: () => fetcher.list<ComplaintListItem>("/complaints", { limit: 5, sortBy: "updatedAt" }),
     }),
   detail: (id: string, fetcher: Fetcher = clientFetcher) =>
     queryOptions({
