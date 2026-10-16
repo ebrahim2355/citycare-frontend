@@ -28,6 +28,7 @@ export function UserAvatar({ name, src, size = 36, className }: UserAvatarProps)
         alt={name}
         width={size}
         height={size}
+        unoptimized
         className={cn("shrink-0 rounded-full object-cover", className)}
         style={{ width: size, height: size }}
       />
