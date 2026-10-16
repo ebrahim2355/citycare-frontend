@@ -124,10 +124,3 @@ export interface TrackedComplaint {
   department: { name: string };
   updates: { fromStatus: ComplaintStatus | null; toStatus: ComplaintStatus; createdAt: string }[];
 }
-
-export type RefundResult = "REFUNDED" | "FAILED" | "NOT_NEEDED";
-
-export interface StatusChangeResult {
-  complaint: ComplaintDetail;
-  refund: RefundResult;
-}

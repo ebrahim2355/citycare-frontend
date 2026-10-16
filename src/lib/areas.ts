@@ -18,3 +18,6 @@ export const DHAKA_AREAS = [
   "Uttara",
   "Wari",
 ];
+
+export const mapLink = (latitude: number, longitude: number) =>
+  `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=17/${latitude}/${longitude}`;

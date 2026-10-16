@@ -8,11 +8,8 @@ import { TextField } from "@/components/forms/form-fields";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
-import { DHAKA_AREAS } from "@/lib/areas";
+import { DHAKA_AREAS, mapLink } from "@/lib/areas";
 import type { ComplaintValues } from "@/lib/validations";
-
-export const mapLink = (latitude: number, longitude: number) =>
-  `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=17/${latitude}/${longitude}`;
 
 export function StepLocation({ form }: { form: UseFormReturn<ComplaintValues> }) {
   const listId = useId();
