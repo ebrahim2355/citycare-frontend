@@ -22,6 +22,7 @@ export const useUiStore = create<UiState>()(
       name: "citycare-ui",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ sidebarCollapsed: state.sidebarCollapsed }),
+      skipHydration: true,
     }
   )
 );
