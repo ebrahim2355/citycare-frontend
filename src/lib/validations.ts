@@ -107,3 +107,35 @@ export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
 export type ProfileValues = z.infer<typeof profileSchema>;
 export type ContactValues = z.infer<typeof contactSchema>;
 export type TrackValues = z.infer<typeof trackSchema>;
+
+export const complaintSchema = z
+  .object({
+    categoryId: z.string().min(1, "Choose what you want to report"),
+    title: z.string().trim().min(5, "Title must be at least 5 characters").max(120, "Title cannot be longer than 120 characters"),
+    description: z
+      .string()
+      .trim()
+      .min(10, "Describe the problem in at least 10 characters")
+      .max(2000, "Description cannot be longer than 2000 characters"),
+    priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"], "Choose how urgent it is"),
+    area: z.string().trim().min(2, "Area must be at least 2 characters").max(80, "Area cannot be longer than 80 characters"),
+    address: z.string().trim().min(5, "Address must be at least 5 characters").max(200, "Address cannot be longer than 200 characters"),
+    latitude: z.number().min(-90).max(90).optional(),
+    longitude: z.number().min(-180).max(180).optional(),
+  })
+  .refine((values) => (values.latitude === undefined) === (values.longitude === undefined), {
+    path: ["longitude"],
+    message: "Send the latitude and the longitude together",
+  });
+
+export type ComplaintValues = z.infer<typeof complaintSchema>;
+
+export const editComplaintSchema = z.object({
+  title: complaintSchema.shape.title,
+  description: complaintSchema.shape.description,
+  priority: complaintSchema.shape.priority,
+  area: complaintSchema.shape.area,
+  address: complaintSchema.shape.address,
+});
+
+export type EditComplaintValues = z.infer<typeof editComplaintSchema>;
