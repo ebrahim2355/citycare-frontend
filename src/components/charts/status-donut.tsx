@@ -49,7 +49,7 @@ export default function StatusDonut({ counts, centerLabel = "reports" }: { count
           </Pie>
         </PieChart>
       </ChartContainer>
-      <ul className="grid gap-2 text-sm">
+      <ul className="grid max-w-sm gap-2 text-sm">
         {data.map((item) => (
           <li key={item.status} className="flex items-center justify-between gap-3">
             <span className="flex items-center gap-2">
