@@ -34,7 +34,7 @@ export function StatCard({ label, value, icon: Icon, hint, tone = "teal", href, 
         </span>
       </div>
       <p className="text-2xl font-semibold tracking-tight tabular-nums">{value}</p>
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      {hint && <div className="text-xs text-muted-foreground">{hint}</div>}
     </Card>
   );
 
