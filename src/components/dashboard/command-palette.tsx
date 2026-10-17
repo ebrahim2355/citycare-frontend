@@ -191,7 +191,6 @@ export function CommandPalette({ role }: { role: Role }) {
           </div>
           <CommandList className="max-h-[min(60vh,26rem)] p-1">
             {nothing && <CommandEmpty>Nothing matches “{text}”.</CommandEmpty>}
-            <ReportResults query={query} role={role} onOpen={go} />
             {pages.length > 0 && (
               <CommandGroup heading="Go to">
                 {pages.map((item) => (
@@ -244,6 +243,7 @@ export function CommandPalette({ role }: { role: Role }) {
                 </CommandItem>
               </CommandGroup>
             )}
+            <ReportResults query={query} role={role} onOpen={go} />
           </CommandList>
         </Command>
         <div className="flex items-center justify-between gap-3 border-t bg-muted/40 px-4 py-2.5 text-xs text-muted-foreground">
