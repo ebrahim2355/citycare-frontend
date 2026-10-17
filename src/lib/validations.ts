@@ -166,3 +166,27 @@ export const changeRoleSchema = z
 
 export type CreateUserValues = z.infer<typeof createUserSchema>;
 export type ChangeRoleValues = z.infer<typeof changeRoleSchema>;
+
+export const departmentSchema = z.object({
+  name: z.string().trim().min(2, "Name must be at least 2 characters").max(80, "Name cannot be longer than 80 characters"),
+  description: optionalText(500, "Description"),
+  contactEmail: z.email("Enter a valid email address").optional().or(z.literal("")),
+});
+
+export const categorySchema = z
+  .object({
+    name: z.string().trim().min(2, "Name must be at least 2 characters").max(80, "Name cannot be longer than 80 characters"),
+    description: optionalText(500, "Description"),
+    type: z.enum(["COMPLAINT", "SERVICE"], "Choose a type"),
+    fee: z.number("Enter the fee as a number").min(0, "The fee cannot be negative").max(100000, "The fee is too large"),
+    slaHours: z
+      .number("Enter the target time in hours")
+      .int("Use whole hours")
+      .min(1, "At least 1 hour")
+      .max(720, "At most 720 hours (30 days)"),
+    departmentId: z.string().min(1, "Choose a department"),
+  })
+  .refine((values) => values.type === "SERVICE" || values.fee === 0, { path: ["fee"], message: "A complaint category is always free" });
+
+export type DepartmentValues = z.infer<typeof departmentSchema>;
+export type CategoryValues = z.infer<typeof categorySchema>;

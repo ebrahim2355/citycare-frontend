@@ -99,6 +99,43 @@ export function PasswordField<T extends FieldValues>({
   );
 }
 
+export function NumberField<T extends FieldValues>({
+  control,
+  name,
+  label,
+  description,
+  className,
+  ...inputProps
+}: BaseFieldProps<T> & Omit<InputProps, "type">) {
+  const id = useId();
+
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <Field data-invalid={fieldState.invalid} className={className}>
+          <FieldLabel htmlFor={id}>{label}</FieldLabel>
+          <Input
+            {...inputProps}
+            id={id}
+            type="number"
+            inputMode="decimal"
+            name={field.name}
+            ref={field.ref}
+            onBlur={field.onBlur}
+            value={field.value ?? ""}
+            onChange={(event) => field.onChange(event.target.value === "" ? undefined : Number(event.target.value))}
+            aria-invalid={fieldState.invalid}
+          />
+          {description && <FieldDescription>{description}</FieldDescription>}
+          <FieldError errors={[fieldState.error]} />
+        </Field>
+      )}
+    />
+  );
+}
+
 type TextareaProps = Omit<ComponentProps<typeof Textarea>, "name" | "value" | "onChange" | "onBlur" | "defaultValue">;
 
 export function TextareaField<T extends FieldValues>({
