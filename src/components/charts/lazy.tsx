@@ -10,3 +10,7 @@ export const LazyStatusDonut = dynamic(() => import("@/components/charts/status-
 export const LazyWeeklyBars = dynamic(() => import("@/components/charts/weekly-bars"), { ssr: false, loading: chartLoading });
 
 export const LazyRatingBars = dynamic(() => import("@/components/charts/rating-bars"), { ssr: false, loading: chartLoading });
+
+export const LazyTrendArea = dynamic(() => import("@/components/charts/trend-area"), { ssr: false, loading: chartLoading });
+
+export const LazyDepartmentBars = dynamic(() => import("@/components/charts/department-bars"), { ssr: false, loading: chartLoading });

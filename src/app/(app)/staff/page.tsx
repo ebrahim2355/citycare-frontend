@@ -4,7 +4,7 @@ import { StaffOverview } from "@/components/dashboard/staff/staff-overview";
 import { getQueryClient } from "@/lib/query/client";
 import { complaintQueries, statsQueries } from "@/lib/query/options";
 import { serverFetcher } from "@/lib/server/fetcher";
-import { ASSIGNED_QUEUE, IN_PROGRESS_QUEUE } from "@/lib/staff-queues";
+import { ASSIGNED_QUEUE, IN_PROGRESS_QUEUE } from "@/lib/queues";
 
 export const metadata: Metadata = { title: "Staff desk" };
 

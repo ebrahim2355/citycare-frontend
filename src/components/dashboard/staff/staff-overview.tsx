@@ -17,7 +17,7 @@ import { useSession } from "@/hooks/use-session";
 import type { ComplaintFilters } from "@/lib/filters";
 import { formatNumber } from "@/lib/format";
 import { complaintQueries, statsQueries } from "@/lib/query/options";
-import { ASSIGNED_QUEUE, IN_PROGRESS_QUEUE } from "@/lib/staff-queues";
+import { ASSIGNED_QUEUE, IN_PROGRESS_QUEUE } from "@/lib/queues";
 
 function Queue({ title, description, filters, emptyText }: { title: string; description: string; filters: ComplaintFilters; emptyText: string }) {
   const list = useQuery(complaintQueries.list(filters));
