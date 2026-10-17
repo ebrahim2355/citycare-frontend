@@ -64,6 +64,8 @@
   --animate-progress: progress-slide 1.2s ease-in-out infinite;
   --animate-float-slow: float-slow 7s ease-in-out infinite;
   --animate-spin-slow: spin 2.4s linear infinite;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-draw: draw 1.8s ease-in-out infinite;
 }
 
 :root {
@@ -309,6 +311,30 @@
   }
   100% {
     transform: translateX(310%);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 1.05;
+    opacity: 1;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  85% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
   }
 }
 

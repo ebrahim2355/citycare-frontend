@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { showOverlay } from "@/stores/overlay-store";
 
 export function GoogleButton({ redirect, className }: { redirect?: string | null; className?: string }) {
   const href = redirect ? `/api/auth/google?redirect=${encodeURIComponent(redirect)}` : "/api/auth/google";
@@ -6,6 +9,11 @@ export function GoogleButton({ redirect, className }: { redirect?: string | null
   return (
     <a
       href={href}
+      onClick={(event) => {
+        if (!event.metaKey && !event.ctrlKey && !event.shiftKey && event.button === 0) {
+          showOverlay("Connecting to Google", "You choose the account on Google's own page");
+        }
+      }}
       className={cn(
         "inline-flex h-10 w-full items-center justify-center gap-2.5 rounded-lg border bg-card px-4 text-sm font-medium transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
         className

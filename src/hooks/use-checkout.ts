@@ -1,8 +1,8 @@
 "use client";
 
-import { toast } from "sonner";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/lib/api/client";
+import { showOverlay } from "@/stores/overlay-store";
 import type { CheckoutResult } from "@/types";
 
 export function useCheckout() {
@@ -10,7 +10,7 @@ export function useCheckout() {
     mutationFn: async (complaintId: string) =>
       (await api.post<CheckoutResult>("/payments/initiate", { complaintId, clientUrl: window.location.origin })).data,
     onSuccess: (result) => {
-      toast.info(result.reused ? "Opening your open checkout" : "Taking you to Stripe to pay");
+      showOverlay("Opening secure checkout", result.reused ? "Taking you back to your open Stripe checkout" : "Taking you to Stripe to pay");
       window.location.assign(result.checkoutUrl);
     },
   });

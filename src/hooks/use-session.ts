@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/client";
 import { queryKeys, sessionQuery } from "@/lib/query/options";
+import { showOverlay } from "@/stores/overlay-store";
 import type { Role, User } from "@/types";
 
 export function useSession() {
@@ -31,6 +32,7 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: () => authApi.post<null>("logout"),
+    onMutate: () => showOverlay("Signing you out", "Ending your session on this device"),
     onSettled: () => {
       queryClient.clear();
       queryClient.setQueryData(queryKeys.session, null);

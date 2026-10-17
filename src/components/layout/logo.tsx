@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 type Surface = "auto" | "dark";
 
-export function LogoMark({ surface = "auto", className }: { surface?: Surface; className?: string }) {
+export function LogoMark({ surface = "auto", animated = false, className }: { surface?: Surface; animated?: boolean; className?: string }) {
   return (
     <svg viewBox="0 0 32 32" aria-hidden className={cn("size-8 shrink-0", className)}>
       <rect
@@ -22,7 +22,8 @@ export function LogoMark({ surface = "auto", className }: { surface?: Surface; c
         strokeWidth="2.6"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="stroke-mint"
+        className={cn("stroke-mint", animated && "animate-draw")}
+        {...(animated && { pathLength: 1, strokeDasharray: "1 1.1" })}
       />
     </svg>
   );
