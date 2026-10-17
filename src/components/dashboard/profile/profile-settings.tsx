@@ -21,6 +21,12 @@ import { ROLE_LABEL } from "@/lib/roles";
 import { changePasswordSchema, type ChangePasswordValues, profileSchema, type ProfileValues } from "@/lib/validations";
 import type { User } from "@/types";
 
+const DETAILS_HINT = {
+  CITIZEN: "Staff use your phone number only when they need to reach you about a report.",
+  STAFF: "Admins use these details to reach you about your jobs.",
+  ADMIN: "Other admins see these details in the user list.",
+} as const;
+
 function ProfileForm({ user }: { user: User }) {
   const setSession = useSetSession();
   const form = useForm<ProfileValues>({
@@ -59,7 +65,7 @@ function ProfileForm({ user }: { user: User }) {
             <UserRound className="size-4.5 text-primary" aria-hidden />
             Personal details
           </CardTitle>
-          <CardDescription>Staff use your phone number only when they need to reach you about a report.</CardDescription>
+          <CardDescription>{DETAILS_HINT[user.role]}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-6">
           <div className="flex items-center gap-4">
