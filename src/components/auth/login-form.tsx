@@ -81,9 +81,9 @@ export function LoginForm() {
         <GoogleButton redirect={redirect} />
       </form>
 
-      <div className="flex items-center gap-3 text-xs font-medium tracking-wide text-muted-foreground uppercase" aria-hidden>
+      <div className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase" aria-hidden>
         <span className="h-px flex-1 bg-border" />
-        or
+        or try a demo account
         <span className="h-px flex-1 bg-border" />
       </div>
 
@@ -97,17 +97,20 @@ export function LoginForm() {
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
           {DEMO_ACCOUNTS.map((account) => (
-            <div key={account.role} className="flex flex-col gap-3 rounded-xl border bg-card p-4 text-center">
-              <span className="mx-auto flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div
+              key={account.role}
+              className="group flex flex-col gap-3 rounded-xl border bg-card p-4 text-center shadow-card transition-[border-color,box-shadow] duration-200 hover:border-primary/40 hover:shadow-raised"
+            >
+              <span className="mx-auto flex size-10 items-center justify-center rounded-lg bg-navy text-white transition-colors group-hover:bg-primary dark:bg-white/10">
                 <account.icon className="size-5" aria-hidden />
               </span>
               <div className="space-y-1">
                 <p className="text-sm font-semibold">{account.label}</p>
-                <p className="text-xs text-muted-foreground">{account.description}</p>
+                <p className="text-xs leading-relaxed text-muted-foreground">{account.description}</p>
               </div>
               <Button
                 type="button"
-                variant="secondary"
+                variant="outline"
                 className="mt-auto w-full"
                 disabled={busy}
                 onClick={() => submit({ email: account.email, password: account.password }, account.role)}

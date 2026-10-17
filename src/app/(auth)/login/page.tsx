@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <>
-      <AuthHeading title="Welcome back 👋" description="Sign in to your CityCare account" />
-      <Suspense fallback={<Skeleton className="h-[560px] rounded-xl" />}>
+      <AuthHeading title="Welcome back" description="Sign in to your CityCare account" />
+      <Suspense fallback={<Skeleton className="h-140 rounded-xl" />}>
         <LoginForm />
       </Suspense>
     </>
