@@ -1,55 +1,82 @@
 import {
   ArrowRight,
-  BadgeCheck,
   Building2,
   Camera,
+  CircleCheck,
   ClipboardList,
+  Clock3,
   HardHat,
   MapPinned,
-  MessageSquareText,
   Route,
-  ShieldCheck,
   Star,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
+import { CategoryIcon } from "@/components/shared/category-icon";
+import { CountUp } from "@/components/shared/count-up";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { formatHours, formatMoney, formatNumber, formatSla } from "@/lib/format";
+import { PROGRESS_STEPS, STATUS_META } from "@/lib/complaint-meta";
+import { formatMoney, formatNumber, formatSla } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { Category, PublicStats } from "@/types";
 
-export function SectionHeading({ eyebrow, title, description }: { eyebrow: string; title: string; description?: string }) {
+interface SectionHeadingProps {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  align?: "center" | "start";
+}
+
+export function SectionHeading({ eyebrow, title, description, align = "center" }: SectionHeadingProps) {
+  const centered = align === "center";
+
   return (
-    <div className="mx-auto max-w-2xl space-y-3 text-center">
-      <p className="text-sm font-semibold tracking-wide text-primary uppercase">{eyebrow}</p>
-      <h2 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">{title}</h2>
-      {description && <p className="text-pretty text-muted-foreground">{description}</p>}
+    <div className={cn("reveal max-w-2xl space-y-4", centered && "mx-auto text-center")}>
+      <p className="inline-flex items-center gap-2.5 text-xs font-semibold tracking-[0.16em] text-primary uppercase">
+        <span className="h-px w-6 bg-primary/50" aria-hidden />
+        {eyebrow}
+        {centered && <span className="h-px w-6 bg-primary/50" aria-hidden />}
+      </p>
+      <h2 className="font-display text-3xl font-semibold text-balance sm:text-[2.6rem] sm:leading-[1.12]">{title}</h2>
+      {description && <p className="text-pretty text-muted-foreground sm:text-lg">{description}</p>}
     </div>
   );
 }
 
-export function StatsStrip({ stats }: { stats: PublicStats | null }) {
+export function CityNumbers({ stats }: { stats: PublicStats | null }) {
   if (!stats) {
     return null;
   }
 
   const items = [
-    { label: "Reports handled", value: formatNumber(stats.totalComplaints) },
-    { label: "Resolution rate", value: `${stats.resolutionRate}%` },
-    { label: "Average time to fix", value: formatHours(stats.averageResolutionHours) },
-    { label: "City departments", value: formatNumber(stats.departmentCount) },
+    { value: stats.resolvedComplaints, label: "Reports fixed and closed", note: "Checked by the people who sent them" },
+    { value: stats.openComplaints, label: "Open right now", note: "Each one has a named owner" },
+    { value: stats.departmentCount, label: "City departments", note: "Roads, water, waste, lights and parks" },
+    { value: stats.serviceCount, label: "Kinds of report", note: "Free complaints and paid services" },
   ];
 
   return (
     <section aria-label="City numbers" className="border-b bg-card">
-      <dl className="container-page grid grid-cols-2 gap-6 py-10 md:grid-cols-4">
-        {items.map((item) => (
-          <div key={item.label} className="text-center">
-            <dd className="text-3xl font-bold tracking-tight text-primary tabular-nums sm:text-4xl">{item.value}</dd>
-            <dt className="mt-1 text-sm text-muted-foreground">{item.label}</dt>
-          </div>
+      <ul className="container-page grid grid-cols-2 lg:grid-cols-4">
+        {items.map((item, index) => (
+          <li
+            key={item.label}
+            className={cn(
+              "reveal px-3 py-8 sm:px-6 sm:py-10",
+              index % 2 === 1 && "border-l",
+              index >= 2 && "border-t lg:border-t-0",
+              index === 2 && "lg:border-l"
+            )}
+          >
+            <p className="font-display text-4xl font-semibold tracking-tight lining-nums sm:text-5xl">
+              <CountUp value={item.value} />
+            </p>
+            <p className="mt-2 text-sm font-semibold">{item.label}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{item.note}</p>
+          </li>
         ))}
-      </dl>
+      </ul>
     </section>
   );
 }
@@ -77,100 +104,160 @@ const steps = [
   },
 ];
 
+function StatusJourney() {
+  return (
+    <div className="reveal mx-auto mt-16 max-w-4xl rounded-2xl border bg-card p-5 shadow-card sm:p-7">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+        <p className="font-semibold">The same five steps for every report</p>
+        <p className="text-sm text-muted-foreground">Paid services start once the fee is paid</p>
+      </div>
+      <ol className="mt-6 grid grid-cols-5">
+        {PROGRESS_STEPS.map((step, index) => {
+          const Icon = STATUS_META[step.status].icon;
+
+          return (
+            <li key={step.status} className="flex flex-col items-center gap-2.5 text-center">
+              <div className="flex w-full items-center">
+                <span className={cn("h-px flex-1", index > 0 && "bg-primary/35")} />
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-primary/25 bg-accent text-accent-foreground">
+                  <Icon className="size-4.5" aria-hidden />
+                </span>
+                <span className={cn("h-px flex-1", index < PROGRESS_STEPS.length - 1 && "bg-primary/35")} />
+              </div>
+              <span className="px-1 text-xs font-medium sm:text-sm">{step.label}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 export function HowItWorks() {
   return (
-    <section className="container-page py-20">
+    <section className="container-page py-20 sm:py-28">
       <SectionHeading
         eyebrow="How it works"
         title="From your street to a finished job"
         description="No phone queues and no lost paperwork. Every report has an owner and a clock."
       />
-      <ol className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {steps.map((step, index) => (
-          <li key={step.title}>
-            <Card className="h-full gap-4 p-6">
-              <div className="flex items-center justify-between">
-                <span className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <step.icon className="size-5" aria-hidden />
-                </span>
-                <span className="font-mono text-sm text-muted-foreground">0{index + 1}</span>
-              </div>
-              <h3 className="text-lg font-semibold">{step.title}</h3>
-              <p className="text-sm text-muted-foreground">{step.text}</p>
-            </Card>
-          </li>
-        ))}
-      </ol>
+      <div className="relative mt-16">
+        <div
+          aria-hidden
+          className="absolute top-7 right-[12.5%] left-[12.5%] hidden h-px bg-linear-to-r from-transparent via-primary/35 to-transparent md:block"
+        />
+        <ol className="relative grid gap-12 md:grid-cols-4 md:gap-8">
+          {steps.map((step, index) => (
+            <li key={step.title} className="reveal flex flex-col items-center text-center">
+              <span className="flex size-14 items-center justify-center rounded-full border bg-card text-primary shadow-card ring-8 ring-background">
+                <step.icon className="size-6" aria-hidden />
+              </span>
+              <p className="mt-6 font-mono text-xs font-semibold tracking-[0.14em] text-primary">STEP {String(index + 1).padStart(2, "0")}</p>
+              <h3 className="mt-2 text-lg font-semibold">{step.title}</h3>
+              <p className="mt-2 max-w-64 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <StatusJourney />
     </section>
   );
 }
 
-export function ServicesPreview({ categories }: { categories: Category[] | null }) {
-  const complaints = (categories ?? []).filter((category) => category.type === "COMPLAINT").slice(0, 6);
-  const services = (categories ?? []).filter((category) => category.type === "SERVICE").slice(0, 4);
+function CategoryTile({ category }: { category: Category }) {
+  const isService = category.type === "SERVICE";
 
-  if (!categories?.length) {
+  return (
+    <li className="reveal">
+      <Link
+        href={`/services#${category.department.id}`}
+        className="card-hover group flex h-full flex-col gap-4 rounded-xl border bg-card p-5 shadow-card focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <span
+            className={cn(
+              "flex size-11 items-center justify-center rounded-lg",
+              isService ? "bg-brass/15 text-brass-strong" : "bg-accent text-accent-foreground"
+            )}
+          >
+            <CategoryIcon name={category.name} className="size-5" />
+          </span>
+          <span
+            className={cn(
+              "rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums",
+              isService ? "border-brass/40 bg-brass/10 text-brass-strong" : "bg-muted/60 text-muted-foreground"
+            )}
+          >
+            {isService ? formatMoney(category.fee) : "Free"}
+          </span>
+        </div>
+        <div className="space-y-1">
+          <h3 className="font-semibold transition-colors group-hover:text-primary">{category.name}</h3>
+          <p className="text-sm text-muted-foreground">{category.description ?? category.department.name}</p>
+        </div>
+        <p className="mt-auto flex items-center gap-1.5 border-t pt-3 text-xs text-muted-foreground">
+          <Clock3 className="size-3.5" aria-hidden />
+          {category.department.name} · within {formatSla(category.slaHours)}
+        </p>
+      </Link>
+    </li>
+  );
+}
+
+function CategoryGroup({ title, note, items, className }: { title: string; note: string; items: Category[]; className: string }) {
+  if (!items.length) {
     return null;
   }
 
   return (
-    <section className="border-y bg-muted/30">
-      <div className="container-page py-20">
+    <div className="space-y-5">
+      <div className="reveal flex flex-col gap-1 border-b pb-3 sm:flex-row sm:items-baseline sm:justify-between">
+        <h3 className="text-lg font-semibold">{title}</h3>
+        <p className="text-sm text-muted-foreground">{note}</p>
+      </div>
+      <ul className={cn("grid gap-4", className)}>
+        {items.map((category) => (
+          <CategoryTile key={category.id} category={category} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export function ServicesPreview({ categories, stats }: { categories: Category[] | null; stats: PublicStats | null }) {
+  if (!categories?.length) {
+    return null;
+  }
+
+  const reports = new Map(stats?.topCategories.map((item) => [item.categoryId, item.complaints]));
+  const byReports = (a: Category, b: Category) => (reports.get(b.id) ?? 0) - (reports.get(a.id) ?? 0) || a.name.localeCompare(b.name);
+  const complaints = categories.filter((category) => category.type === "COMPLAINT").sort(byReports).slice(0, 6);
+  const services = categories.filter((category) => category.type === "SERVICE").sort(byReports).slice(0, 4);
+
+  return (
+    <section className="border-y bg-muted/40">
+      <div className="container-page py-20 sm:py-28">
         <SectionHeading
           eyebrow="What you can report"
           title="Free complaints and paid home services"
           description="Problems on public property are always free. Services at your home have a fixed fee shown up front."
         />
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          <Card className="gap-5 p-6">
-            <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-sky-500/12 text-sky-700 dark:text-sky-300">
-                <MessageSquareText className="size-5" aria-hidden />
-              </span>
-              <div>
-                <h3 className="font-semibold">Complaints</h3>
-                <p className="text-sm text-muted-foreground">Free, with a target time for each type</p>
-              </div>
-            </div>
-            <ul className="divide-y">
-              {complaints.map((category) => (
-                <li key={category.id} className="flex items-center justify-between gap-4 py-3">
-                  <div className="min-w-0">
-                    <p className="font-medium">{category.name}</p>
-                    <p className="truncate text-sm text-muted-foreground">{category.department.name}</p>
-                  </div>
-                  <span className="shrink-0 text-sm text-muted-foreground">within {formatSla(category.slaHours)}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-          <Card className="gap-5 p-6">
-            <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-amber-500/14 text-amber-700 dark:text-amber-300">
-                <BadgeCheck className="size-5" aria-hidden />
-              </span>
-              <div>
-                <h3 className="font-semibold">Paid services</h3>
-                <p className="text-sm text-muted-foreground">Pay online. Refunded if the city rejects it</p>
-              </div>
-            </div>
-            <ul className="divide-y">
-              {services.map((category) => (
-                <li key={category.id} className="flex items-center justify-between gap-4 py-3">
-                  <div className="min-w-0">
-                    <p className="font-medium">{category.name}</p>
-                    <p className="truncate text-sm text-muted-foreground">{category.description ?? category.department.name}</p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-secondary px-3 py-1 text-sm font-semibold text-secondary-foreground">
-                    {formatMoney(category.fee)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Card>
+        <div className="mt-14 space-y-12">
+          <CategoryGroup
+            title="Complaints about public property"
+            note="Always free, each with a target time"
+            items={complaints}
+            className="sm:grid-cols-2 lg:grid-cols-3"
+          />
+          <CategoryGroup
+            title="Paid home services"
+            note="Fixed fee before you pay, refunded if the city says no"
+            items={services}
+            className="sm:grid-cols-2 lg:grid-cols-4"
+          />
         </div>
-        <div className="mt-8 text-center">
-          <Button asChild variant="outline" size="lg">
+        <div className="mt-12 text-center">
+          <Button asChild variant="outline" size="lg" className="bg-card">
             <Link href="/services">
               See all services and departments
               <ArrowRight data-icon="inline-end" />
@@ -182,23 +269,26 @@ export function ServicesPreview({ categories }: { categories: Category[] | null 
   );
 }
 
-function BarList({ items, label }: { items: { name: string; value: number }[]; label: string }) {
+function BarList({ items, label, barClassName }: { items: { name: string; value: number }[]; label: string; barClassName: string }) {
   const max = Math.max(1, ...items.map((item) => item.value));
 
   return (
-    <ul className="space-y-3" aria-label={label}>
-      {items.map((item) => (
-        <li key={item.name} className="space-y-1.5">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium">{item.name}</span>
-            <span className="text-muted-foreground tabular-nums">{formatNumber(item.value)}</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-primary" style={{ width: `${(item.value / max) * 100}%` }} />
+    <ol className="space-y-4" aria-label={label}>
+      {items.map((item, index) => (
+        <li key={item.name} className="grid grid-cols-[1.75rem_1fr] items-start gap-2">
+          <span className="pt-0.5 font-mono text-xs text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
+          <div className="space-y-1.5">
+            <div className="flex items-baseline justify-between gap-3 text-sm">
+              <span className="font-medium">{item.name}</span>
+              <span className="text-muted-foreground tabular-nums">{formatNumber(item.value)} reports</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div className={cn("reveal-bar h-full origin-left rounded-full", barClassName)} style={{ width: `${(item.value / max) * 100}%` }} />
+            </div>
           </div>
         </li>
       ))}
-    </ul>
+    </ol>
   );
 }
 
@@ -208,28 +298,43 @@ export function CityInsights({ stats }: { stats: PublicStats | null }) {
   }
 
   return (
-    <section className="container-page py-20">
+    <section className="container-page py-20 sm:py-28">
       <SectionHeading
         eyebrow="Open data"
         title="Where the city needs care"
         description="Live numbers from every report on CityCare. Personal details are never shown."
       />
-      <div className="mt-12 grid gap-6 lg:grid-cols-2">
-        <Card className="gap-5 p-6">
-          <h3 className="flex items-center gap-2 font-semibold">
-            <MapPinned className="size-5 text-primary" aria-hidden />
-            Busiest areas
-          </h3>
-          <BarList label="Reports by area" items={stats.topAreas.map((item) => ({ name: item.area, value: item.complaints }))} />
+      <div className="mt-14 grid gap-6 lg:grid-cols-2">
+        <Card className="reveal gap-6 p-6 sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-info/12 text-info">
+              <MapPinned className="size-5" aria-hidden />
+            </span>
+            <div>
+              <h3 className="font-semibold">Busiest areas</h3>
+              <p className="text-sm text-muted-foreground">Where most reports come from</p>
+            </div>
+          </div>
+          <BarList
+            label="Reports by area"
+            items={stats.topAreas.map((item) => ({ name: item.area, value: item.complaints }))}
+            barClassName="bg-info"
+          />
         </Card>
-        <Card className="gap-5 p-6">
-          <h3 className="flex items-center gap-2 font-semibold">
-            <ClipboardList className="size-5 text-primary" aria-hidden />
-            Most reported problems
-          </h3>
+        <Card className="reveal gap-6 p-6 sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+              <ClipboardList className="size-5" aria-hidden />
+            </span>
+            <div>
+              <h3 className="font-semibold">Most reported problems</h3>
+              <p className="text-sm text-muted-foreground">What people report the most</p>
+            </div>
+          </div>
           <BarList
             label="Reports by category"
             items={stats.topCategories.map((item) => ({ name: item.name, value: item.complaints }))}
+            barClassName="bg-primary"
           />
         </Card>
       </div>
@@ -241,36 +346,40 @@ const roles = [
   {
     icon: UserRound,
     title: "Citizens",
+    accent: "bg-primary",
     points: ["Report problems with photos and location", "Pay for home services with Stripe", "Track, rate and reopen your reports"],
   },
   {
     icon: HardHat,
     title: "Field staff",
+    accent: "bg-brass",
     points: ["See your tasks sorted by deadline", "Start and resolve jobs with proof photos", "Pause new work when you are on leave"],
   },
   {
     icon: Building2,
     title: "City admins",
+    accent: "bg-info",
     points: ["Assign by workload or move to another department", "Manage departments, services and fees", "Follow trends, refunds and the audit log"],
   },
 ];
 
 export function RolesSection() {
   return (
-    <section className="border-t bg-muted/30">
-      <div className="container-page py-20">
+    <section className="border-t bg-muted/40">
+      <div className="container-page py-20 sm:py-28">
         <SectionHeading eyebrow="One platform" title="Built for everyone who keeps the city running" />
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
           {roles.map((role) => (
-            <Card key={role.title} className="gap-4 p-6">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Card key={role.title} className="reveal relative gap-5 p-6 sm:p-7">
+              <span aria-hidden className={cn("absolute inset-x-0 top-0 h-1", role.accent)} />
+              <span className="flex size-11 items-center justify-center rounded-lg bg-navy text-white dark:bg-white/10">
                 <role.icon className="size-5" aria-hidden />
               </span>
-              <h3 className="text-lg font-semibold">{role.title}</h3>
-              <ul className="space-y-2.5">
+              <h3 className="font-display text-xl font-semibold">{role.title}</h3>
+              <ul className="space-y-3">
                 {role.points.map((point) => (
-                  <li key={point} className="flex gap-2 text-sm text-muted-foreground">
-                    <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+                  <li key={point} className="flex gap-2.5 text-sm text-muted-foreground">
+                    <CircleCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
                     {point}
                   </li>
                 ))}
@@ -285,25 +394,29 @@ export function RolesSection() {
 
 export function CtaBand() {
   return (
-    <section className="container-page py-20">
-      <div className="relative overflow-hidden rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground sm:px-12">
+    <section className="container-page py-20 sm:py-24">
+      <div className="reveal relative isolate overflow-hidden rounded-3xl border border-white/10 bg-navy px-6 py-14 text-center text-navy-foreground shadow-float sm:px-12 sm:py-20">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(30rem_15rem_at_50%_120%,rgb(255_255_255/0.18),transparent)]"
+          className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgb(255_255_255/0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.05)_1px,transparent_1px)] bg-size-[40px_40px] mask-[radial-gradient(ellipse_at_center,black,transparent_75%)]"
         />
-        <h2 className="relative text-3xl font-bold tracking-tight text-balance sm:text-4xl">Something broken on your street?</h2>
-        <p className="relative mx-auto mt-3 max-w-xl text-pretty opacity-90">
+        <div aria-hidden className="absolute -bottom-32 left-1/2 -z-10 h-64 w-160 -translate-x-1/2 rounded-full bg-mint/20 blur-3xl" />
+        <h2 className="font-display text-3xl font-semibold text-balance text-white sm:text-[2.75rem]">Something broken on your street?</h2>
+        <p className="mx-auto mt-4 max-w-xl text-pretty text-navy-muted sm:text-lg">
           It takes two minutes to report it. You get a tracking code at once and an update every time it moves.
         </p>
-        <div className="relative mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Button asChild size="lg" variant="secondary" className="h-11 px-6 text-base">
-            <Link href="/dashboard/complaints/new">Report a problem</Link>
+        <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button asChild size="lg" className="h-12 bg-mint px-6 text-base text-navy hover:bg-mint/90">
+            <Link href="/dashboard/complaints/new">
+              Report a problem
+              <ArrowRight data-icon="inline-end" />
+            </Link>
           </Button>
           <Button
             asChild
             size="lg"
             variant="outline"
-            className="h-11 border-primary-foreground/40 bg-transparent px-6 text-base text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            className="h-12 border-white/20 bg-white/5 px-6 text-base text-white hover:bg-white/10 hover:text-white dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10"
           >
             <Link href="/register">Create a free account</Link>
           </Button>

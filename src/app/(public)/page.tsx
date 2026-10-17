@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
-import { CityInsights, CtaBand, HowItWorks, RolesSection, ServicesPreview, StatsStrip } from "@/components/home/home-sections";
+import { CityInsights, CityNumbers, CtaBand, HowItWorks, RolesSection, ServicesPreview } from "@/components/home/home-sections";
 import { getCategories, getPublicStats } from "@/lib/server/public-api";
 
 export const metadata: Metadata = {
@@ -16,9 +16,9 @@ export default async function HomePage() {
   return (
     <>
       <Hero stats={stats} />
-      <StatsStrip stats={stats} />
+      <CityNumbers stats={stats} />
       <HowItWorks />
-      <ServicesPreview categories={categories} />
+      <ServicesPreview categories={categories} stats={stats} />
       <CityInsights stats={stats} />
       <RolesSection />
       <CtaBand />

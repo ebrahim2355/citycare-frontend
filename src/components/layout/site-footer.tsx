@@ -43,7 +43,7 @@ export function SiteFooter() {
     <footer className="relative overflow-hidden border-t border-transparent bg-navy text-navy-foreground dark:border-white/8">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(255_255_255/0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.04)_1px,transparent_1px)] bg-size-[44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(255_255_255/0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.04)_1px,transparent_1px)] bg-size-[44px_44px] mask-[linear-gradient(to_bottom,black,transparent_70%)]"
       />
       <div className="container-page relative grid gap-12 py-14 md:grid-cols-[1.5fr_repeat(3,1fr)]">
         <div className="space-y-5">

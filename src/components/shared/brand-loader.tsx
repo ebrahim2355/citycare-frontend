@@ -24,7 +24,7 @@ export function BrandLoader({ title, description, fullScreen = false, delayed = 
       {fullScreen && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_65%)]"
+          className="pointer-events-none absolute inset-0 bg-grid mask-[radial-gradient(ellipse_at_center,black_10%,transparent_65%)]"
         />
       )}
       <div className="relative size-20">

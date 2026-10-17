@@ -16,6 +16,7 @@
   --color-navy-muted: var(--navy-muted);
   --color-brass: var(--brass);
   --color-mint: var(--mint);
+  --color-brass-strong: var(--brass-strong);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
@@ -91,6 +92,7 @@
   --navy-foreground: oklch(0.97 0.006 255);
   --navy-muted: oklch(0.74 0.03 258);
   --brass: oklch(0.73 0.115 82);
+  --brass-strong: oklch(0.5 0.1 72);
   --mint: oklch(0.8 0.13 163);
   --border: oklch(0.915 0.008 255);
   --input: oklch(0.885 0.011 255);
@@ -135,6 +137,7 @@
   --navy-foreground: oklch(0.96 0.006 255);
   --navy-muted: oklch(0.7 0.025 258);
   --brass: oklch(0.79 0.11 82);
+  --brass-strong: oklch(0.84 0.11 84);
   --mint: oklch(0.8 0.13 163);
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 14%);
@@ -252,6 +255,14 @@
   }
 }
 
+@utility reveal-bar {
+  @supports (animation-timeline: view()) {
+    animation: grow-x linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 35%;
+  }
+}
+
 @utility header-elevate {
   @supports (animation-timeline: scroll()) {
     animation: header-elevate linear both;
@@ -322,6 +333,15 @@
   }
 }
 
+@keyframes grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes header-elevate {
   from {
     box-shadow: 0 0 0 0 rgb(15 23 42 / 0);
@@ -380,5 +400,13 @@
     animation-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@media print, (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-bar,
+  .header-elevate {
+    animation: none !important;
   }
 }
