@@ -7,6 +7,7 @@ import { type ReactNode, useEffect } from "react";
 import { findNavItem } from "@/components/dashboard/nav-config";
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 import { Logo } from "@/components/layout/logo";
+import { RouteTransition } from "@/components/layout/route-transition";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserMenu } from "@/components/layout/user-menu";
 import { Button } from "@/components/ui/button";
@@ -144,7 +145,7 @@ export function AppShell({ user: initialUser, children }: { user: User; children
           </div>
         </header>
         <main id="main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-          {children}
+          <RouteTransition>{children}</RouteTransition>
         </main>
       </div>
     </div>
