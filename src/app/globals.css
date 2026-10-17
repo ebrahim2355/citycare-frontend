@@ -15,6 +15,7 @@
   --color-navy-foreground: var(--navy-foreground);
   --color-navy-muted: var(--navy-muted);
   --color-brass: var(--brass);
+  --color-mint: var(--mint);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
@@ -88,6 +89,7 @@
   --navy-foreground: oklch(0.97 0.006 255);
   --navy-muted: oklch(0.74 0.03 258);
   --brass: oklch(0.73 0.115 82);
+  --mint: oklch(0.8 0.13 163);
   --border: oklch(0.915 0.008 255);
   --input: oklch(0.885 0.011 255);
   --ring: oklch(0.55 0.1 163);
@@ -131,6 +133,7 @@
   --navy-foreground: oklch(0.96 0.006 255);
   --navy-muted: oklch(0.7 0.025 258);
   --brass: oklch(0.79 0.11 82);
+  --mint: oklch(0.8 0.13 163);
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.66 0.11 163);
