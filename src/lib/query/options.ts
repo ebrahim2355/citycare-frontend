@@ -132,6 +132,7 @@ export const adminQueries = {
     queryOptions({
       queryKey: queryKeys.workload(filters),
       queryFn: () => fetcher.get<StaffWorkload[]>("/admin/staff-workload", filters),
+      placeholderData: keepPreviousData,
     }),
   auditLogs: (filters: AuditFilters, fetcher: Fetcher = clientFetcher) =>
     queryOptions({
