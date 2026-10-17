@@ -9,7 +9,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
       <body className="flex min-h-dvh items-center justify-center bg-background p-6 font-sans text-foreground">
         <main role="alert" className="max-w-md space-y-5 text-center">
           <p className="text-sm font-semibold tracking-wide text-primary uppercase">CityCare</p>
-          <h1 className="text-3xl font-bold tracking-tight">The app could not start</h1>
+          <h1 className="font-display text-3xl font-semibold">The app could not start</h1>
           <p className="text-muted-foreground">
             Something broke before the page could load. Please try again. If it keeps happening, come back in a few minutes.
           </p>

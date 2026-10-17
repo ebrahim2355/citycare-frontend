@@ -1,9 +1,10 @@
 "use client";
 
-import { Home, RefreshCw, TriangleAlert } from "lucide-react";
+import { Home, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { RoadworksIllustration } from "@/components/shared/illustrations";
 import { Button } from "@/components/ui/button";
 
 interface RouteErrorProps {
@@ -18,12 +19,11 @@ export function RouteError({ error, reset, homeHref = "/" }: RouteErrorProps) {
   }, [error]);
 
   return (
-    <div role="alert" className="mx-auto flex max-w-lg flex-col items-center gap-5 px-4 py-20 text-center">
-      <span className="flex size-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
-        <TriangleAlert className="size-8" aria-hidden />
-      </span>
+    <div role="alert" className="mx-auto flex max-w-lg animate-fade-in flex-col items-center gap-6 px-4 py-16 text-center">
+      <RoadworksIllustration />
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Something went wrong here</h1>
+        <p className="font-mono text-xs font-semibold tracking-[0.2em] text-destructive">SOMETHING WENT WRONG</p>
+        <h1 className="font-display text-3xl font-semibold">We hit a bump in the road</h1>
         <p className="text-muted-foreground">
           The page hit an unexpected problem. It is usually a short network hiccup between CityCare and the city servers.
         </p>
