@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AUDIT_ACTIONS, AUDIT_ENTITIES } from "@/lib/audit";
 
 type SearchInput = URLSearchParams | Record<string, string | string[] | undefined>;
 
@@ -70,8 +71,8 @@ export const userFilterSchema = z.object({
 
 export const auditFilterSchema = z.object({
   page,
-  action: text(60),
-  entityType: optionalEnum(["USER", "DEPARTMENT", "CATEGORY", "COMPLAINT", "PAYMENT", "MESSAGE"]),
+  action: optionalEnum(AUDIT_ACTIONS),
+  entityType: optionalEnum(AUDIT_ENTITIES),
   from: date,
   to: date,
   sortOrder,
