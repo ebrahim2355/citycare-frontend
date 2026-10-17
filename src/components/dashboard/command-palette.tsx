@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { NAVIGATION } from "@/components/dashboard/nav-config";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
@@ -120,6 +120,7 @@ export function CommandPalette({ role }: { role: Role }) {
   const logout = useLogout();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const query = useDebounce(text.trim(), 250);
   const mac = useSyncExternalStore(subscribe, isMac, () => false);
 
@@ -135,6 +136,16 @@ export function CommandPalette({ role }: { role: Role }) {
 
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const frame = requestAnimationFrame(() => inputRef.current?.focus());
+
+    return () => cancelAnimationFrame(frame);
+  }, [open]);
 
   const changeOpen = (value: boolean) => {
     setOpen(value);
@@ -183,6 +194,7 @@ export function CommandPalette({ role }: { role: Role }) {
         <Command shouldFilter={false} loop className="rounded-none! p-0">
           <div className="border-b p-2">
             <CommandInput
+              ref={inputRef}
               value={text}
               onValueChange={setText}
               placeholder="Search reports by title or tracking code, or type a page"
@@ -243,7 +255,7 @@ export function CommandPalette({ role }: { role: Role }) {
                 </CommandItem>
               </CommandGroup>
             )}
-            <ReportResults query={query} role={role} onOpen={go} />
+            <ReportResults query={text.trim() ? query : ""} role={role} onOpen={go} />
           </CommandList>
         </Command>
         <div className="flex items-center justify-between gap-3 border-t bg-muted/40 px-4 py-2.5 text-xs text-muted-foreground">
