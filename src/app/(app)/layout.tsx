@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 function ShellFallback() {
-  return <BrandLoader fullScreen delayed title="Preparing your workspace" description="Checking your session and loading your desk" />;
+  return <BrandLoader fullScreen delayed routeLoading title="Preparing your workspace" description="Checking your session and loading your desk" />;
 }
 
 async function SessionShell({ children }: { children: React.ReactNode }) {

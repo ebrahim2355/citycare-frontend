@@ -35,6 +35,7 @@ export function RouteProgress() {
     let trickleTimer = 0;
     let hideTimer = 0;
     let giveUpTimer = 0;
+    let skeletonObserver: MutationObserver | null = null;
 
     const paint = (next: number, opacity = 1) => {
       value = next;
@@ -48,8 +49,26 @@ export function RouteProgress() {
       window.clearTimeout(giveUpTimer);
     };
 
-    const finish = () => {
-      if (!running) {
+    const waitForSkeletons = () => {
+      if (!document.querySelector("[data-route-loading]")) {
+        return false;
+      }
+
+      skeletonObserver?.disconnect();
+      skeletonObserver = new MutationObserver(() => {
+        if (!document.querySelector("[data-route-loading]")) {
+          skeletonObserver?.disconnect();
+          skeletonObserver = null;
+          finish();
+        }
+      });
+      skeletonObserver.observe(document.body, { childList: true, subtree: true });
+
+      return true;
+    };
+
+    const finish = (force = false) => {
+      if (!running || (!force && waitForSkeletons())) {
         return;
       }
 
@@ -85,25 +104,31 @@ export function RouteProgress() {
         trickleTimer = window.setInterval(() => paint(value + (94 - value) * 0.09), 260);
       }, SHOW_AFTER);
 
-      giveUpTimer = window.setTimeout(finish, GIVE_UP_AFTER);
+      giveUpTimer = window.setTimeout(() => {
+        skeletonObserver?.disconnect();
+        skeletonObserver = null;
+        finish(true);
+      }, GIVE_UP_AFTER);
     };
 
     const onStart = (event: Event) => start((event as CustomEvent<string>).detail);
+    const onEnd = () => finish();
 
     window.addEventListener(NAVIGATION_START, onStart);
-    window.addEventListener(NAVIGATION_END, finish);
+    window.addEventListener(NAVIGATION_END, onEnd);
 
     return () => {
       stopTimers();
+      skeletonObserver?.disconnect();
       window.clearTimeout(hideTimer);
       window.removeEventListener(NAVIGATION_START, onStart);
-      window.removeEventListener(NAVIGATION_END, finish);
+      window.removeEventListener(NAVIGATION_END, onEnd);
     };
   }, []);
 
   return (
     <>
-      <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-100 h-[3px]">
+      <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-100 h-0.75">
         <div
           ref={barRef}
           className="h-full origin-left bg-linear-to-r from-primary/70 to-primary shadow-[0_0_10px_var(--primary)] transition-[transform,opacity] duration-300 ease-out"

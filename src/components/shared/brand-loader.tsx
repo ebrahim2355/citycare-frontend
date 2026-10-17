@@ -6,14 +6,16 @@ interface BrandLoaderProps {
   description?: string;
   fullScreen?: boolean;
   delayed?: boolean;
+  routeLoading?: boolean;
   className?: string;
 }
 
-export function BrandLoader({ title, description, fullScreen = false, delayed = false, className }: BrandLoaderProps) {
+export function BrandLoader({ title, description, fullScreen = false, delayed = false, routeLoading = false, className }: BrandLoaderProps) {
   return (
     <div
       role="status"
       aria-live="polite"
+      data-route-loading={routeLoading || undefined}
       className={cn(
         "flex animate-fade-in flex-col items-center justify-center gap-6 px-6 text-center",
         fullScreen && "fixed inset-0 z-90 bg-background",

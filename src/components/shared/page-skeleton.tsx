@@ -9,7 +9,7 @@ const BAR_HEIGHTS = [38, 62, 45, 80, 55, 70, 42, 88, 60, 74, 50, 66];
 
 function Loading({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div role="status" className={cn("animate-fade-in space-y-6 [animation-delay:80ms]", className)}>
+    <div role="status" data-route-loading className={cn("animate-fade-in space-y-6 [animation-delay:80ms]", className)}>
       <span className="sr-only">Loading</span>
       {children}
     </div>
@@ -388,7 +388,7 @@ export function WizardSkeleton() {
 
 export function PublicPageSkeleton({ cards = 4 }: { cards?: number }) {
   return (
-    <div role="status" className="animate-fade-in [animation-delay:80ms]">
+    <div role="status" data-route-loading className="animate-fade-in [animation-delay:80ms]">
       <span className="sr-only">Loading</span>
       <div className="bg-navy">
         <div className="container-page space-y-5 py-12 sm:py-16 lg:py-20">
