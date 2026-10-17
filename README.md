@@ -57,10 +57,28 @@ Stripe runs in test mode. Pay with the card `4242 4242 4242 4242`, any future da
 | Client state | Zustand (sidebar and the saved report draft), React Query cache for the session |
 | Forms | React Hook Form with Zod, the same rules as the API |
 | Charts | Recharts through the shadcn chart component |
-| Feedback | Sonner toasts, skeleton loaders, empty and error states |
+| Feedback | Sonner toasts, a route progress bar, a branded loading screen, page skeletons, empty and error states |
 | Auth | JWT access token and refresh token in HTTP-only cookies, verified with jose in the proxy |
 | Payments | Stripe Checkout (test mode) |
 | Images | next/image with a Cloudinary loader |
+
+## Design
+
+- A formal city service look: navy for structure (the top bar, page title bands, the dashboard sidebar and the footer), a civic green for actions and brass for paid services. Status badges use one calm colour for each step of the workflow, and priority is shown with small signal bars.
+- Public Sans for the interface, Source Serif 4 for headings and IBM Plex Mono for tracking codes and receipts.
+- Light and dark mode share the same colour tokens in `src/app/globals.css`. Changing the theme spreads the new one in a circle from the toggle with the View Transitions API.
+
+### Loading and motion
+
+- A progress bar at the top of the window starts on every router navigation (`onRouterTransitionStart` in `src/instrumentation-client.ts`) and finishes when the new page has replaced its skeleton.
+- A branded loading screen while the dashboard checks the session, and a short full screen hand-off when signing in or out and when leaving for Stripe or Google.
+- Every page has its own skeleton with a shimmer (overviews, lists, details, forms, the report wizard and the public pages), so the layout does not jump when the data arrives.
+- Pages fade in on navigation, sections reveal while scrolling (CSS scroll-driven animations), the city numbers count up when they come into view, and the dashboard header shows a small "Syncing" sign while data refreshes in the background.
+- All motion is turned off for visitors who ask for reduced motion.
+
+### Command palette
+
+Every dashboard has a command palette (`Ctrl K` or `⌘ K`). It jumps to any page of your role, runs quick actions, changes the theme and searches your reports by title or tracking code.
 
 ## How It Works
 
@@ -124,6 +142,7 @@ src
 ├── lib                   api client, server fetcher, query options, validations, filters
 ├── stores                Zustand stores
 ├── types                 API response types
+├── instrumentation-client.ts   starts the route progress bar on navigation
 └── proxy.ts              route protection and token refresh
 ```
 
