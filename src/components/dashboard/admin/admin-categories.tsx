@@ -290,6 +290,28 @@ export function AdminCategories() {
           loading={categories.isPending}
           fetching={categories.isPlaceholderData}
           caption="Categories"
+          renderMobile={(category) => (
+            <div className="space-y-3 rounded-xl border bg-card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className={cn("min-w-0", !category.isActive && "opacity-60")}>
+                  <p className="font-medium">{category.name}</p>
+                  <p className="text-xs text-muted-foreground">{category.department.name}</p>
+                </div>
+                <ActiveSwitch category={category} listKey={query.queryKey} />
+              </div>
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <span className="text-muted-foreground">
+                  {category.type === "SERVICE" ? formatMoney(category.fee) : "Free"} · {formatSla(category.slaHours)}
+                </span>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon-sm" aria-label={`Edit ${category.name}`} onClick={() => openDialog(category)}>
+                    <Pencil />
+                  </Button>
+                  <DeleteCategory category={category} />
+                </div>
+              </div>
+            </div>
+          )}
           empty={<EmptyState icon={Tags} title="No categories match" description="Change the filters or create a new category." />}
         />
       )}

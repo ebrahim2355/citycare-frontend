@@ -281,6 +281,32 @@ export function AdminUsers() {
             loading={list.isPending}
             fetching={list.isPlaceholderData}
             caption="Users"
+            renderMobile={(user) => (
+              <div className="space-y-3 rounded-xl border bg-card p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <UserAvatar name={user.name} src={user.avatarUrl} size={40} />
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{user.name}</p>
+                      <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                    </div>
+                  </div>
+                  {user.id !== me?.id && <UserActions user={user} />}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <span className={cn("inline-flex h-6 items-center rounded-full px-2.5 font-medium", ROLE_TONE[user.role])}>{ROLE_LABEL[user.role]}</span>
+                  <span
+                    className={cn(
+                      "inline-flex h-6 items-center rounded-full px-2.5 font-medium",
+                      user.status === "ACTIVE" ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300" : "bg-red-500/12 text-red-700 dark:text-red-300"
+                    )}
+                  >
+                    {user.status === "ACTIVE" ? "Active" : "Blocked"}
+                  </span>
+                  {user.department && <span className="text-muted-foreground">{user.department.name}</span>}
+                </div>
+              </div>
+            )}
             empty={
               <EmptyState
                 icon={Users}

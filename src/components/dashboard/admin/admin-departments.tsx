@@ -171,6 +171,23 @@ export function AdminDepartments() {
           getRowKey={(department) => department.id}
           loading={departments.isPending}
           caption="Departments"
+          renderMobile={(department) => (
+            <div className="flex items-start justify-between gap-3 rounded-xl border bg-card p-4">
+              <div className="min-w-0 space-y-1">
+                <p className="font-medium">{department.name}</p>
+                {department.description && <p className="text-sm text-muted-foreground">{department.description}</p>}
+                <Link href={`/admin/categories?departmentId=${department.id}`} className="text-xs font-medium text-primary hover:underline">
+                  {department._count?.categories ?? 0} active categories
+                </Link>
+              </div>
+              <div className="flex shrink-0 gap-1">
+                <Button variant="ghost" size="icon-sm" aria-label={`Edit ${department.name}`} onClick={() => openDialog(department)}>
+                  <Pencil />
+                </Button>
+                <DeleteDepartment department={department} />
+              </div>
+            </div>
+          )}
           empty={<EmptyState icon={Building2} title="No departments yet" description="Create the first department to start taking reports." />}
         />
       )}

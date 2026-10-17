@@ -199,6 +199,20 @@ export function AdminAuditLogs() {
             loading={logs.isPending}
             fetching={logs.isPlaceholderData}
             caption="Audit log"
+            renderMobile={(log) => (
+              <div className="space-y-2 rounded-xl border bg-card p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <span className={cn("inline-flex rounded-md px-2 py-0.5 text-xs font-medium", actionTone(log.action))}>{humanize(log.action)}</span>
+                  <span className="text-xs text-muted-foreground">{formatDateTime(log.createdAt)}</span>
+                </div>
+                <p className="text-sm">
+                  {log.actor ? log.actor.name : "System"} · {humanize(log.entityType)}
+                </p>
+                {describeMetadata(log.metadata).length > 0 && (
+                  <p className="text-xs break-all text-muted-foreground">{describeMetadata(log.metadata).join(" · ")}</p>
+                )}
+              </div>
+            )}
             empty={<EmptyState icon={History} title="Nothing recorded for these filters" />}
           />
           {logs.data && <PaginationBar meta={logs.data.meta} onPageChange={(page) => setFilters({ page })} label="entries" />}
