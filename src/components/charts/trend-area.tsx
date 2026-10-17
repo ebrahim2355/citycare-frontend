@@ -12,7 +12,7 @@ import {
 import { formatShortDate } from "@/lib/format";
 
 const config = {
-  created: { label: "New reports", color: "var(--chart-3)" },
+  created: { label: "New reports", color: "var(--chart-2)" },
   resolved: { label: "Resolved", color: "var(--chart-1)" },
 } satisfies ChartConfig;
 

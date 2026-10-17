@@ -12,7 +12,7 @@ import {
 import type { DepartmentStats } from "@/types";
 
 const config = {
-  open: { label: "Open", color: "var(--chart-3)" },
+  open: { label: "Open", color: "var(--chart-2)" },
   overdue: { label: "Overdue", color: "var(--chart-5)" },
   resolved: { label: "Resolved", color: "var(--chart-1)" },
 } satisfies ChartConfig;

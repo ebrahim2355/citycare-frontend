@@ -3,7 +3,7 @@
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-const config = { count: { label: "Ratings", color: "var(--chart-2)" } } satisfies ChartConfig;
+const config = { count: { label: "Ratings", color: "var(--chart-3)" } } satisfies ChartConfig;
 
 export default function RatingBars({ data }: { data: { rating: number; count: number }[] }) {
   const rows = [...data].sort((a, b) => b.rating - a.rating).map((item) => ({ ...item, label: `${item.rating} ★` }));

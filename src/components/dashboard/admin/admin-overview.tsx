@@ -298,7 +298,7 @@ export function AdminOverview() {
                         <span className="font-medium">{PRIORITY_META[priority].label}</span>
                         <span className="h-2 overflow-hidden rounded-full bg-muted">
                           <span
-                            className={cn("block h-full rounded-full", priority === "URGENT" ? "bg-destructive" : priority === "HIGH" ? "bg-orange-500" : "bg-primary")}
+                            className={cn("block h-full rounded-full", PRIORITY_META[priority].bar)}
                             style={{ width: `${(count / max) * 100}%` }}
                           />
                         </span>

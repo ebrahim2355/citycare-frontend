@@ -124,14 +124,14 @@ export const MAX_IMAGES_PER_UPLOAD = 2;
 export const MAX_IMAGE_MB = 2;
 
 export const STATUS_CHART_COLORS: Record<ComplaintStatus, string> = {
-  PENDING_PAYMENT: "oklch(0.77 0.16 70)",
-  SUBMITTED: "oklch(0.68 0.14 237)",
-  ASSIGNED: "oklch(0.6 0.18 275)",
-  IN_PROGRESS: "oklch(0.7 0.17 50)",
-  RESOLVED: "oklch(0.7 0.15 160)",
-  CLOSED: "oklch(0.55 0.1 186)",
-  REJECTED: "oklch(0.63 0.21 25)",
-  CANCELLED: "oklch(0.65 0.01 250)",
+  PENDING_PAYMENT: "oklch(0.77 0.17 70)",
+  SUBMITTED: "oklch(0.6 0.045 257)",
+  ASSIGNED: "oklch(0.61 0.22 293)",
+  IN_PROGRESS: "oklch(0.62 0.19 260)",
+  RESOLVED: "oklch(0.7 0.16 162)",
+  CLOSED: "oklch(0.56 0.1 185)",
+  REJECTED: "oklch(0.64 0.21 25)",
+  CANCELLED: "oklch(0.72 0.012 286)",
 };
 
 export const progressIndex = (status: ComplaintStatus) => PROGRESS_STEPS.findIndex((step) => step.status === status);
