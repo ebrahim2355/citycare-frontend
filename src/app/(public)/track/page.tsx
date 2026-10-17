@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { PublicHero } from "@/components/layout/public-hero";
 import { TrackLookup } from "@/components/public/track-lookup";
-import { PageHeader } from "@/components/shared/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
@@ -12,15 +12,18 @@ export const metadata: Metadata = {
 
 export default function TrackPage() {
   return (
-    <div className="container-page max-w-3xl space-y-8 py-12 sm:py-16">
-      <PageHeader
-        eyebrow="Track"
+    <>
+      <PublicHero
+        page="Track"
         title="Where is my report?"
         description="Every report gets a tracking code. Enter it to see where it is right now."
+        className="pb-16 sm:pb-24"
       />
-      <Suspense fallback={<Skeleton className="h-24 rounded-xl" />}>
-        <TrackLookup />
-      </Suspense>
-    </div>
+      <div className="container-page relative z-10 -mt-12 max-w-3xl pb-16 sm:-mt-16 sm:pb-20">
+        <Suspense fallback={<Skeleton className="h-36 rounded-2xl" />}>
+          <TrackLookup />
+        </Suspense>
+      </div>
+    </>
   );
 }

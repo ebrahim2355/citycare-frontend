@@ -52,7 +52,7 @@ function TrackResult({ code }: { code: string }) {
   ];
 
   return (
-    <Card className="gap-6 p-6">
+    <Card className="animate-fade-up gap-6 p-6 shadow-raised">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <p className="font-mono text-sm text-muted-foreground">{data.trackingCode}</p>
@@ -82,7 +82,7 @@ function TrackResult({ code }: { code: string }) {
         <ol className="space-y-3 border-l pl-5">
           {data.updates.map((update, index) => (
             <li key={`${update.toStatus}-${update.createdAt}-${index}`} className="relative">
-              <span className="absolute top-1.5 -left-[26px] size-2.5 rounded-full bg-primary ring-4 ring-background" />
+              <span className="absolute top-1.5 -left-6.5 size-2.5 rounded-full bg-primary ring-4 ring-background" />
               <p className="text-sm font-medium">{STATUS_META[update.toStatus].label}</p>
               <p className="text-xs text-muted-foreground">{formatDateTime(update.createdAt)}</p>
             </li>
@@ -103,33 +103,34 @@ export function TrackLookup() {
   const code = filters.code && trackSchema.safeParse({ code: filters.code }).success ? filters.code : undefined;
 
   return (
-    <div className="space-y-8">
-      <form
-        noValidate
-        onSubmit={form.handleSubmit((values) => setFilters({ code: values.code.trim().toUpperCase() }))}
-        className="flex flex-col gap-3 sm:flex-row sm:items-start"
-      >
-        <TextField
-          control={form.control}
-          name="code"
-          label="Tracking code"
-          placeholder="CC-261017-AB12CD"
-          autoComplete="off"
-          className="sm:flex-1 [&_input]:h-11 [&_input]:font-mono [&_input]:uppercase"
-        />
-        <Button type="submit" size="lg" className="h-11 sm:mt-7">
-          Track
-          <ArrowRight data-icon="inline-end" />
-        </Button>
-      </form>
-      {code ? (
-        <TrackResult code={code} />
-      ) : (
-        <p className="text-sm text-muted-foreground">
-          You find the code in the confirmation email and on the report in your dashboard. Tracking shows the status and history only,
-          never personal details.
-        </p>
-      )}
+    <div className="space-y-6">
+      <div className="animate-fade-up rounded-2xl border bg-card p-5 shadow-raised sm:p-6">
+        <form
+          noValidate
+          onSubmit={form.handleSubmit((values) => setFilters({ code: values.code.trim().toUpperCase() }))}
+          className="flex flex-col gap-3 sm:flex-row sm:items-start"
+        >
+          <TextField
+            control={form.control}
+            name="code"
+            label="Tracking code"
+            placeholder="CC-261017-AB12CD"
+            autoComplete="off"
+            className="sm:flex-1 [&_input]:h-11 [&_input]:font-mono [&_input]:uppercase"
+          />
+          <Button type="submit" size="lg" className="h-11 sm:mt-7">
+            Track
+            <ArrowRight data-icon="inline-end" />
+          </Button>
+        </form>
+        {!code && (
+          <p className="mt-4 border-t pt-4 text-sm text-muted-foreground">
+            You find the code in the confirmation email and on the report in your dashboard. Tracking shows the status and history
+            only, never personal details.
+          </p>
+        )}
+      </div>
+      {code && <TrackResult code={code} />}
     </div>
   );
 }

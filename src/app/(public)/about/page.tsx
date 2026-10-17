@@ -1,10 +1,11 @@
-import { Eye, FileClock, Gauge, HandCoins, Scale, Users } from "lucide-react";
+import { Building2, Eye, FileClock, Gauge, HandCoins, Scale, Users } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SectionHeading } from "@/components/home/home-sections";
+import { heroOutlineButton, heroPrimaryButton, PublicHero } from "@/components/layout/public-hero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { formatHours, formatNumber } from "@/lib/format";
+import { formatHours, formatNumber, pluralize } from "@/lib/format";
 import { getDepartments, getPublicStats } from "@/lib/server/public-api";
 
 export const metadata: Metadata = {
@@ -51,71 +52,76 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="border-b bg-muted/30">
-        <div className="container-page grid gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:items-center">
-          <div className="space-y-5">
-            <p className="text-sm font-semibold tracking-wide text-primary uppercase">About CityCare</p>
-            <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl">A shorter path from a broken street to a fixed one</h1>
-            <p className="text-lg text-pretty text-muted-foreground">
-              Reports to the city used to get lost between phone calls, offices and paper forms. CityCare gives every report one home: the
-              citizen who sent it, the department that owns it and the staff member who fixes it all look at the same record.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg">
-                <Link href="/register">Join CityCare</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/services">See the services</Link>
-              </Button>
-            </div>
-          </div>
-          {stats && (
-            <dl className="grid grid-cols-2 gap-4">
+      <PublicHero
+        page="About"
+        title="A shorter path from a broken street to a fixed one"
+        description="Reports to the city used to get lost between phone calls, offices and paper forms. CityCare gives every report one home: the citizen who sent it, the department that owns it and the staff member who fixes it all look at the same record."
+        actions={
+          <>
+            <Button asChild size="lg" className={heroPrimaryButton}>
+              <Link href="/register">Join CityCare</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className={heroOutlineButton}>
+              <Link href="/services">See the services</Link>
+            </Button>
+          </>
+        }
+        aside={
+          stats && (
+            <dl className="grid grid-cols-2 gap-3 sm:gap-4">
               {[
                 { label: "Reports on CityCare", value: formatNumber(stats.totalComplaints) },
                 { label: "Fixed and closed", value: formatNumber(stats.resolvedComplaints) },
                 { label: "Average time to fix", value: formatHours(stats.averageResolutionHours) },
                 { label: "Kinds of service", value: formatNumber(stats.serviceCount) },
               ].map((item) => (
-                <Card key={item.label} className="gap-1 p-6">
-                  <dd className="text-3xl font-bold tracking-tight text-primary tabular-nums">{item.value}</dd>
-                  <dt className="text-sm text-muted-foreground">{item.label}</dt>
-                </Card>
+                <div key={item.label} className="rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                  <dt className="text-sm text-navy-muted">{item.label}</dt>
+                  <dd className="mt-1 font-display text-3xl font-semibold text-white tabular-nums lining-nums">{item.value}</dd>
+                </div>
               ))}
             </dl>
-          )}
-        </div>
-      </section>
+          )
+        }
+      />
 
-      <section className="container-page py-20">
+      <section className="container-page py-20 sm:py-24">
         <SectionHeading eyebrow="Our rules" title="Six promises the platform keeps" />
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {principles.map((principle) => (
-            <Card key={principle.title} className="gap-3 p-6">
-              <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <principle.icon className="size-5" aria-hidden />
-              </span>
-              <h2 className="font-semibold">{principle.title}</h2>
-              <p className="text-sm text-muted-foreground">{principle.text}</p>
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {principles.map((principle, index) => (
+            <Card key={principle.title} className="reveal gap-4 p-6">
+              <div className="flex items-center justify-between">
+                <span className="flex size-11 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                  <principle.icon className="size-5" aria-hidden />
+                </span>
+                <span className="font-mono text-xs font-semibold text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
+              </div>
+              <h2 className="text-lg font-semibold">{principle.title}</h2>
+              <p className="text-sm leading-relaxed text-muted-foreground">{principle.text}</p>
             </Card>
           ))}
         </div>
       </section>
 
       {departments && departments.length > 0 && (
-        <section className="border-t bg-muted/30">
-          <div className="container-page py-20">
+        <section className="border-t bg-muted/40">
+          <div className="container-page py-20 sm:py-24">
             <SectionHeading
               eyebrow="Departments"
               title="The teams behind the work"
               description="Every report goes straight to the department that owns the problem."
             />
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {departments.map((department) => (
-                <Card key={department.id} className="gap-2 p-5">
-                  <h3 className="font-semibold">{department.name}</h3>
-                  {department.description && <p className="text-sm text-muted-foreground">{department.description}</p>}
-                  <p className="text-xs font-medium text-primary">{department._count?.categories ?? 0} report types</p>
+                <Card key={department.id} className="reveal flex-row gap-4 p-5">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-navy text-white dark:bg-white/10">
+                    <Building2 className="size-5" aria-hidden />
+                  </span>
+                  <div className="min-w-0 space-y-1.5">
+                    <h3 className="font-semibold">{department.name}</h3>
+                    {department.description && <p className="text-sm text-muted-foreground">{department.description}</p>}
+                    <p className="text-xs font-medium text-primary">{pluralize(department._count?.categories ?? 0, "report type")}</p>
+                  </div>
                 </Card>
               ))}
             </div>

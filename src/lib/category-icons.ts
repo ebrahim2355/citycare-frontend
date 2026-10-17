@@ -19,7 +19,7 @@ const RULES: [RegExp, LucideIcon][] = [
   [/tanker/i, Truck],
   [/septic/i, Container],
   [/trim/i, Scissors],
-  [/tree/i, TreeDeciduous],
+  [/\btrees?\b/i, TreeDeciduous],
   [/bulk|furniture/i, Sofa],
   [/garbage|collect/i, Recycle],
   [/dump|waste|litter/i, Trash2],

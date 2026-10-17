@@ -1,6 +1,7 @@
+import { LifeBuoy, Mail, Phone, Search } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/components/shared/page-header";
+import { PublicHero } from "@/components/layout/public-hero";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 
 const groups = [
   {
+    id: "reporting",
     title: "Reporting",
     items: [
       {
@@ -38,6 +40,7 @@ const groups = [
     ],
   },
   {
+    id: "after-sending",
     title: "After you send it",
     items: [
       {
@@ -62,6 +65,7 @@ const groups = [
     ],
   },
   {
+    id: "payments",
     title: "Payments and refunds",
     items: [
       {
@@ -82,6 +86,7 @@ const groups = [
     ],
   },
   {
+    id: "account",
     title: "Your account",
     items: [
       {
@@ -99,37 +104,70 @@ const groups = [
 
 export default function FaqPage() {
   return (
-    <div className="container-page grid gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_320px]">
-      <div className="space-y-10">
-        <PageHeader eyebrow="Help" title="Frequently asked questions" description="Short answers about reporting, tracking and payments." />
-        {groups.map((group) => (
-          <section key={group.title} className="space-y-3" aria-labelledby={`faq-${group.title}`}>
-            <h2 id={`faq-${group.title}`} className="text-lg font-semibold">
-              {group.title}
-            </h2>
-            <Accordion type="single" collapsible className="rounded-xl border bg-card px-5">
-              {group.items.map((item) => (
-                <AccordionItem key={item.question} value={item.question}>
-                  <AccordionTrigger className="text-left text-base">{item.question}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">{item.answer}</AccordionContent>
-                </AccordionItem>
+    <>
+      <PublicHero
+        page="Help"
+        title="Frequently asked questions"
+        description="Short answers about reporting, tracking, payments and your account."
+      />
+      <div className="container-page grid gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_300px] lg:gap-14">
+        <div className="space-y-12">
+          {groups.map((group) => (
+            <section key={group.id} id={group.id} className="reveal scroll-mt-24 space-y-4" aria-labelledby={`faq-${group.id}`}>
+              <h2 id={`faq-${group.id}`} className="font-display text-2xl font-semibold">
+                {group.title}
+              </h2>
+              <Accordion type="single" collapsible className="rounded-xl border bg-card px-5 shadow-card">
+                {group.items.map((item) => (
+                  <AccordionItem key={item.question} value={item.question}>
+                    <AccordionTrigger className="py-4 text-left text-base">{item.question}</AccordionTrigger>
+                    <AccordionContent className="leading-relaxed text-muted-foreground">{item.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </section>
+          ))}
+        </div>
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <nav aria-label="Topics" className="hidden rounded-xl border bg-card p-4 shadow-card lg:block">
+            <p className="px-2 pb-2 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">On this page</p>
+            <ul className="space-y-0.5">
+              {groups.map((group) => (
+                <li key={group.id}>
+                  <a href={`#${group.id}`} className="block rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted">
+                    {group.title}
+                  </a>
+                </li>
               ))}
-            </Accordion>
-          </section>
-        ))}
+            </ul>
+          </nav>
+          <Card className="gap-4 p-6">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+              <LifeBuoy className="size-5" aria-hidden />
+            </span>
+            <div className="space-y-1">
+              <h2 className="font-semibold">Still need help?</h2>
+              <p className="text-sm text-muted-foreground">Send the city team a message. You get a reply by email.</p>
+            </div>
+            <Button asChild>
+              <Link href="/contact">
+                <Mail data-icon="inline-start" />
+                Contact us
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/track">
+                <Search data-icon="inline-start" />
+                Track a report
+              </Link>
+            </Button>
+            <a href="tel:999" className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2.5 text-sm">
+              <Phone className="size-4 text-destructive" aria-hidden />
+              Emergency? Call <span className="font-semibold">999</span>
+            </a>
+          </Card>
+        </aside>
       </div>
-      <aside className="lg:pt-24">
-        <Card className="sticky top-24 gap-3 p-6">
-          <h2 className="font-semibold">Still need help?</h2>
-          <p className="text-sm text-muted-foreground">Send the city team a message. You get a reply by email.</p>
-          <Button asChild>
-            <Link href="/contact">Contact us</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/track">Track a report</Link>
-          </Button>
-        </Card>
-      </aside>
-    </div>
+    </>
   );
 }
