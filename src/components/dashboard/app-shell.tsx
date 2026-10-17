@@ -5,6 +5,7 @@ import { ChevronRight, ExternalLink, Menu, PanelLeftClose, PanelLeftOpen } from 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
+import { CommandPalette } from "@/components/dashboard/command-palette";
 import { findNavItem } from "@/components/dashboard/nav-config";
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 import { Logo } from "@/components/layout/logo";
@@ -198,6 +199,7 @@ export function AppShell({ user: initialUser, children }: { user: User; children
           <Breadcrumbs user={user} />
           <div className="ml-auto flex items-center gap-2">
             <SyncIndicator />
+            <CommandPalette role={user.role} />
             <span className="hidden rounded-md border bg-card px-2 py-1 text-xs font-medium text-muted-foreground xl:inline">{roleLine(user)}</span>
             <ThemeToggle />
             <UserMenu user={user} showName />
