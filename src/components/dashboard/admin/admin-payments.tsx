@@ -49,7 +49,7 @@ export function AdminPayments() {
   return (
     <div className="space-y-6">
       <PageHeader title="Payments" description="Every Stripe checkout for paid services, with refunds for requests that did not go ahead." />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {payments ? (
           <>
             <StatCard label="Revenue" value={formatMoney(payments.revenue)} icon={CircleDollarSign} tone="emerald" />

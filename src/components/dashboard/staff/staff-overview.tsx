@@ -1,13 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { AlarmClock, ArrowRight, CircleCheck, Hammer, PauseCircle, Star, UserCheck } from "lucide-react";
+import { AlarmClock, ArrowRight, CircleCheck, Hammer, ListChecks, PauseCircle, Star, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { ComplaintCard } from "@/components/complaints/complaint-card";
 import { StartWorkButton } from "@/components/dashboard/staff/start-work-button";
+import { bannerPrimaryButton, WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { PageHeader } from "@/components/shared/page-header";
 import { StatCard, StatCardSkeleton } from "@/components/shared/stat-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,18 +62,21 @@ export function StaffOverview() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
+      <WelcomeBanner
         title={`Good to see you, ${user?.name.split(" ")[0] ?? "there"}`}
         description={user?.department ? `${user.department.name} team. Your jobs sorted by deadline.` : "Your jobs sorted by deadline."}
         actions={
-          <Button asChild size="lg">
-            <Link href="/staff/tasks">All my tasks</Link>
+          <Button asChild size="lg" className={bannerPrimaryButton}>
+            <Link href="/staff/tasks">
+              <ListChecks data-icon="inline-start" />
+              All my tasks
+            </Link>
           </Button>
         }
       />
 
       {data && !data.acceptsAssignments && (
-        <div className="flex flex-col gap-3 rounded-xl border border-amber-500/30 bg-amber-500/8 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 rounded-xl border border-amber-300/70 bg-amber-50 p-4 dark:border-amber-400/25 dark:bg-amber-400/10 sm:flex-row sm:items-center sm:justify-between">
           <p className="flex items-center gap-2 text-sm">
             <PauseCircle className="size-4 text-amber-600" aria-hidden />
             You are not taking new jobs right now. Admins and automatic assignment will skip you.
@@ -87,7 +90,7 @@ export function StaffOverview() {
       {stats.error ? (
         <ErrorState error={stats.error} onRetry={() => stats.refetch()} retrying={stats.isFetching} />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {data ? (
             <>
               <StatCard

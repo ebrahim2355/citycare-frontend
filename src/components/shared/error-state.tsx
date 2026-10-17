@@ -18,9 +18,12 @@ export function ErrorState({ error, onRetry, retrying, className }: ErrorStatePr
   return (
     <div
       role="alert"
-      className={cn("flex flex-col items-center gap-3 rounded-xl border border-destructive/30 bg-destructive/5 px-6 py-10 text-center", className)}
+      className={cn(
+        "flex animate-fade-in flex-col items-center gap-3 rounded-xl border border-destructive/25 bg-destructive/5 px-6 py-10 text-center",
+        className
+      )}
     >
-      <span className="flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+      <span className="flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive ring-8 ring-destructive/5">
         <TriangleAlert className="size-6" aria-hidden />
       </span>
       <div className="space-y-1">

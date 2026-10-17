@@ -15,8 +15,8 @@ import {
 import Link from "next/link";
 import { LazyDepartmentBars, LazyStatusDonut, LazyTrendArea } from "@/components/charts/lazy";
 import { AutoAssignButton } from "@/components/dashboard/admin/auto-assign-button";
+import { bannerOutlineButton, WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ErrorState } from "@/components/shared/error-state";
-import { PageHeader } from "@/components/shared/page-header";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { StatCard, StatCardSkeleton } from "@/components/shared/stat-card";
 import { PriorityBadge } from "@/components/shared/status-badge";
@@ -132,11 +132,11 @@ export function AdminOverview() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
+      <WelcomeBanner
         title="City overview"
         description={data ? `Live numbers, refreshed ${formatDateTime(data.generatedAt)}.` : "Live numbers from every department."}
         actions={
-          <Button variant="outline" onClick={() => stats.refetch()} disabled={stats.isFetching}>
+          <Button variant="outline" size="lg" className={bannerOutlineButton} onClick={() => stats.refetch()} disabled={stats.isFetching}>
             <RefreshCw data-icon="inline-start" className={cn(stats.isFetching && "animate-spin")} />
             Refresh
           </Button>
@@ -146,7 +146,7 @@ export function AdminOverview() {
       {stats.error && !data ? (
         <ErrorState error={stats.error} onRetry={() => stats.refetch()} retrying={stats.isFetching} />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {data ? (
             <>
               <StatCard

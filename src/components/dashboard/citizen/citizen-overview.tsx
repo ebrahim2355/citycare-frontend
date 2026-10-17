@@ -5,9 +5,9 @@ import { ArrowRight, CircleCheck, CircleDollarSign, ClipboardList, FilePlus2, Ho
 import Link from "next/link";
 import { LazyStatusDonut } from "@/components/charts/lazy";
 import { ComplaintCard } from "@/components/complaints/complaint-card";
+import { bannerPrimaryButton, WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { PageHeader } from "@/components/shared/page-header";
 import { StatCard, StatCardSkeleton } from "@/components/shared/stat-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,11 +24,11 @@ export function CitizenOverview() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
+      <WelcomeBanner
         title={`Hello, ${firstName}`}
         description="Here is what is happening with your reports."
         actions={
-          <Button asChild size="lg">
+          <Button asChild size="lg" className={bannerPrimaryButton}>
             <Link href="/dashboard/complaints/new">
               <FilePlus2 data-icon="inline-start" />
               New report
@@ -40,7 +40,7 @@ export function CitizenOverview() {
       {stats.error ? (
         <ErrorState error={stats.error} onRetry={() => stats.refetch()} retrying={stats.isFetching} />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {stats.data ? (
             <>
               <StatCard
@@ -83,7 +83,7 @@ export function CitizenOverview() {
       )}
 
       {stats.data && stats.data.awaitingPayment > 0 && (
-        <div className="flex flex-col gap-3 rounded-xl border border-amber-500/30 bg-amber-500/8 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 rounded-xl border border-amber-300/70 bg-amber-50 p-4 dark:border-amber-400/25 dark:bg-amber-400/10 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm">
             <span className="font-semibold">{pluralize(stats.data.awaitingPayment, "service request")}</span> will not reach the city until
             the fee is paid.

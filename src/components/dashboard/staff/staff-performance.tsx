@@ -26,7 +26,7 @@ export function StaffPerformance() {
   return (
     <div className="space-y-8">
       <PageHeader title="Performance" description="How your work looks to the citizens and the city. Updated with every job you close." />
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {data ? (
           <>
             <StatCard label="Jobs resolved" value={formatNumber(data.resolved)} icon={CircleCheck} tone="emerald" hint="Resolved and closed" />

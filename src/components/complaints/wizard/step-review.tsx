@@ -87,7 +87,7 @@ export function StepReview({ values, category, photos, onEdit }: StepReviewProps
         )}
       </Section>
       {category?.type === "SERVICE" && (
-        <div className="flex gap-3 rounded-xl border border-amber-500/30 bg-amber-500/8 p-4 text-sm">
+        <div className="flex gap-3 rounded-xl border border-amber-300/70 bg-amber-50 p-4 dark:border-amber-400/25 dark:bg-amber-400/10 text-sm">
           <ShieldCheck className="size-5 shrink-0 text-amber-600" aria-hidden />
           <p>
             You will pay <span className="font-semibold">{formatMoney(category.fee)}</span> on the next screen with Stripe. The request reaches
