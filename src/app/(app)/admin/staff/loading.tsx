@@ -1,5 +1,5 @@
-import { DashboardPageSkeleton } from "@/components/shared/page-skeleton";
+import { CardsPageSkeleton } from "@/components/shared/page-skeleton";
 
 export default function Loading() {
-  return <DashboardPageSkeleton table={false} />;
+  return <CardsPageSkeleton />;
 }

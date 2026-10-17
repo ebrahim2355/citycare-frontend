@@ -1,5 +1,5 @@
-import { DashboardPageSkeleton } from "@/components/shared/page-skeleton";
+import { ListPageSkeleton } from "@/components/shared/page-skeleton";
 
 export default function Loading() {
-  return <DashboardPageSkeleton stats={0} />;
+  return <ListPageSkeleton filters={5} />;
 }
