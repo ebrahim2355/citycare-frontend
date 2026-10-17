@@ -36,6 +36,7 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { useLogout } from "@/hooks/use-session";
 import { complaintQueries } from "@/lib/query/options";
+import { switchTheme } from "@/lib/theme-transition";
 import type { Role } from "@/types";
 
 interface PaletteAction {
@@ -219,8 +220,8 @@ export function CommandPalette({ role }: { role: Role }) {
                     key={theme.value}
                     value={`theme:${theme.value}`}
                     onSelect={() => {
-                      setTheme(theme.value);
                       changeOpen(false);
+                      switchTheme(theme.value, setTheme);
                     }}
                   >
                     <theme.icon className="text-muted-foreground" />
