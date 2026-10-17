@@ -1,9 +1,10 @@
 import { Building2, CalendarCheck, CalendarClock, CircleDollarSign, ExternalLink, MapPin, RotateCcw, Tag, Timer } from "lucide-react";
 import type { ReactNode } from "react";
+import { RelativeTime } from "@/components/shared/relative-time";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mapLink } from "@/lib/areas";
 import { OPEN_STATUSES } from "@/lib/complaint-meta";
-import { formatDateTime, formatMoney, formatRelative, formatSla } from "@/lib/format";
+import { formatDateTime, formatMoney, formatSla } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ComplaintDetail } from "@/types";
 
@@ -79,7 +80,7 @@ export function ComplaintFacts({ complaint }: { complaint: ComplaintDetail }) {
           {complaint.dueAt && (
             <Fact icon={CalendarClock} label={isOpen ? "Due" : "Was due"} tone={complaint.isOverdue ? "danger" : undefined}>
               {formatDateTime(complaint.dueAt)}
-              {isOpen && <span className="block text-xs font-normal text-muted-foreground">{formatRelative(complaint.dueAt)}</span>}
+              {isOpen && <span className="block text-xs font-normal text-muted-foreground"><RelativeTime value={complaint.dueAt} /></span>}
             </Fact>
           )}
           {complaint.assignedAt && (

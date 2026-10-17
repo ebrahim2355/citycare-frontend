@@ -1,8 +1,9 @@
 import { CalendarClock, ChevronRight, MapPin, UserCheck } from "lucide-react";
 import Link from "next/link";
+import { RelativeTime } from "@/components/shared/relative-time";
 import { FeeStatusBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
 import { OPEN_STATUSES } from "@/lib/complaint-meta";
-import { formatDateTime, formatRelative } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ComplaintListItem } from "@/types";
 
@@ -45,8 +46,8 @@ export function ComplaintCard({ complaint, href, showCitizen = false, className 
           {OPEN_STATUSES.includes(complaint.status) && complaint.dueAt
             ? `Due ${formatDateTime(complaint.dueAt)}`
             : complaint.resolvedAt
-              ? `Resolved ${formatRelative(complaint.resolvedAt)}`
-              : `Created ${formatRelative(complaint.createdAt)}`}
+              ? <RelativeTime value={complaint.resolvedAt} prefix="Resolved" />
+              : <RelativeTime value={complaint.createdAt} prefix="Created" />}
         </span>
         {(showCitizen || complaint.assignedStaff) && (
           <span className="flex items-center gap-1.5 sm:col-span-2">

@@ -9,6 +9,7 @@ import { ProgressSteps } from "@/components/complaints/progress-steps";
 import { TextField } from "@/components/forms/form-fields";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
+import { RelativeTime } from "@/components/shared/relative-time";
 import { OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUrlFilters } from "@/hooks/use-url-filters";
 import { isApiError } from "@/lib/api/errors";
 import { STATUS_META } from "@/lib/complaint-meta";
-import { formatDate, formatDateTime, formatRelative } from "@/lib/format";
+import { formatDate, formatDateTime } from "@/lib/format";
 import { complaintQueries } from "@/lib/query/options";
 import { trackSchema, type TrackValues } from "@/lib/validations";
 
@@ -56,7 +57,7 @@ function TrackResult({ code }: { code: string }) {
         <div className="space-y-2">
           <p className="font-mono text-sm text-muted-foreground">{data.trackingCode}</p>
           <h2 className="text-xl font-semibold">{data.title}</h2>
-          <p className="text-sm text-muted-foreground">Reported {formatRelative(data.createdAt)}</p>
+          <p className="text-sm text-muted-foreground"><RelativeTime value={data.createdAt} prefix="Reported" /></p>
         </div>
         <div className="flex flex-wrap gap-2">
           <StatusBadge status={data.status} />

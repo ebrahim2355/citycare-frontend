@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { FilterSelect } from "@/components/shared/filter-select";
 import { PaginationBar } from "@/components/shared/pagination-bar";
+import { RelativeTime } from "@/components/shared/relative-time";
 import { SearchInput } from "@/components/shared/search-input";
 import { OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { useUrlFilters } from "@/hooks/use-url-filters";
 import { OPEN_STATUSES, PRIORITY_META, STATUS_META } from "@/lib/complaint-meta";
 import { complaintFilterSchema, COMPLAINT_STATUSES, countActiveFilters, PRIORITIES } from "@/lib/filters";
-import { formatDateTime, formatRelative } from "@/lib/format";
+import { formatDateTime } from "@/lib/format";
 import { catalogQueries, complaintQueries } from "@/lib/query/options";
 import { cn } from "@/lib/utils";
 import type { ComplaintListItem, ComplaintStatus } from "@/types";
@@ -43,7 +44,7 @@ interface ComplaintBrowserProps {
 
 function DueCell({ complaint }: { complaint: ComplaintListItem }) {
   if (!OPEN_STATUSES.includes(complaint.status) || !complaint.dueAt) {
-    return <span className="text-muted-foreground">{complaint.resolvedAt ? `Resolved ${formatRelative(complaint.resolvedAt)}` : "—"}</span>;
+    return <span className="text-muted-foreground">{complaint.resolvedAt ? <RelativeTime value={complaint.resolvedAt} prefix="Resolved" /> : "—"}</span>;
   }
 
   return (

@@ -1,10 +1,10 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { RelativeTime } from "@/components/shared/relative-time";
 import { FeeStatusBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
 import { TrackingCode } from "@/components/shared/tracking-code";
 import { Button } from "@/components/ui/button";
-import { formatRelative } from "@/lib/format";
 import type { ComplaintDetail } from "@/types";
 
 interface ComplaintHeaderProps {
@@ -27,7 +27,7 @@ export function ComplaintHeader({ complaint, backHref, backLabel, actions }: Com
         <div className="min-w-0 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <TrackingCode code={complaint.trackingCode} />
-            <span className="text-sm text-muted-foreground">Reported {formatRelative(complaint.createdAt)}</span>
+            <span className="text-sm text-muted-foreground"><RelativeTime value={complaint.createdAt} prefix="Reported" /></span>
           </div>
           <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">{complaint.title}</h1>
           <div className="flex flex-wrap gap-2">

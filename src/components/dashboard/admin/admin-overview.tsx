@@ -17,6 +17,7 @@ import { LazyDepartmentBars, LazyStatusDonut, LazyTrendArea } from "@/components
 import { AutoAssignButton } from "@/components/dashboard/admin/auto-assign-button";
 import { ErrorState } from "@/components/shared/error-state";
 import { PageHeader } from "@/components/shared/page-header";
+import { RelativeTime } from "@/components/shared/relative-time";
 import { StatCard, StatCardSkeleton } from "@/components/shared/stat-card";
 import { PriorityBadge } from "@/components/shared/status-badge";
 import { UserAvatar } from "@/components/shared/user-avatar";
@@ -26,7 +27,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PRIORITY_META } from "@/lib/complaint-meta";
 import { PRIORITIES } from "@/lib/filters";
-import { formatDateTime, formatHours, formatMoney, formatNumber, formatRelative } from "@/lib/format";
+import { formatDateTime, formatHours, formatMoney, formatNumber } from "@/lib/format";
 import { adminQueries, complaintQueries, statsQueries } from "@/lib/query/options";
 import { UNASSIGNED_QUEUE } from "@/lib/queues";
 import { cn } from "@/lib/utils";
@@ -62,7 +63,7 @@ function UnassignedQueue() {
                 <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
                   <span>{complaint.department.name}</span>
                   <span>{complaint.area}</span>
-                  <span>{formatRelative(complaint.createdAt)}</span>
+                  <RelativeTime value={complaint.createdAt} />
                 </p>
               </Link>
               <div className="flex shrink-0 items-center gap-2">
