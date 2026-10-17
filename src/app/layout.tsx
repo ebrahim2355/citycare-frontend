@@ -1,17 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Public_Sans, Source_Serif_4 } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const sans = Public_Sans({
+  variable: "--font-public-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const serif = Source_Serif_4({
+  variable: "--font-source-serif",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const mono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -40,14 +49,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#14191f" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f9fb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1220" },
   ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${jakarta.variable} ${jetbrains.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${sans.variable} ${serif.variable} ${mono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <Providers>{children}</Providers>
       </body>
