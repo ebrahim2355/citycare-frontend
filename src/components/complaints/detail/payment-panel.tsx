@@ -1,14 +1,45 @@
 "use client";
 
-import { CreditCard, Lock } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { CreditCard, Lock, Undo2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { PaymentStatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useCheckout } from "@/hooks/use-checkout";
 import { useSession } from "@/hooks/use-session";
+import { api } from "@/lib/api/client";
 import { formatDateTime, formatMoney } from "@/lib/format";
-import type { ComplaintDetail } from "@/types";
+import { queryKeys } from "@/lib/query/options";
+import type { ComplaintDetail, ComplaintPayment } from "@/types";
+
+function RefundButton({ complaint, payment }: { complaint: ComplaintDetail; payment: ComplaintPayment }) {
+  const queryClient = useQueryClient();
+  const refund = useApiMutation({
+    mutationFn: () => api.post(`/payments/${payment.id}/refund`),
+    successMessage: "Refund sent to the card",
+    invalidate: [queryKeys.complaint(complaint.id), queryKeys.payments, queryKeys.stats],
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.complaints }),
+  });
+
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button size="xs" variant="outline">
+          <Undo2 data-icon="inline-start" />
+          Refund
+        </Button>
+      }
+      title="Refund this payment?"
+      description={`${formatMoney(payment.amount, payment.currency)} goes back to the citizen card through Stripe.`}
+      confirmLabel="Refund payment"
+      pending={refund.isPending}
+      onConfirm={() => refund.mutate()}
+    />
+  );
+}
 
 export function PaymentPanel({ complaint }: { complaint: ComplaintDetail }) {
   const { user } = useSession();
@@ -54,7 +85,12 @@ export function PaymentPanel({ complaint }: { complaint: ComplaintDetail }) {
                   <p className="font-medium tabular-nums">{formatMoney(payment.amount, payment.currency)}</p>
                   <p className="text-xs text-muted-foreground">{formatDateTime(payment.paidAt ?? payment.createdAt)}</p>
                 </div>
-                <PaymentStatusBadge status={payment.status} />
+                <div className="flex items-center gap-2">
+                  {user?.role === "ADMIN" && payment.status === "COMPLETED" && (complaint.status === "REJECTED" || complaint.status === "CANCELLED") && (
+                    <RefundButton complaint={complaint} payment={payment} />
+                  )}
+                  <PaymentStatusBadge status={payment.status} />
+                </div>
               </li>
             ))}
           </ul>

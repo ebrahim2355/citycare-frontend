@@ -45,6 +45,7 @@ export const complaintFilterSchema = z.object({
   paymentStatus: optionalEnum(["NOT_REQUIRED", "UNPAID", "PAID", "REFUNDED"]),
   departmentId: id,
   categoryId: id,
+  assignedStaffId: id,
   unassigned: flag,
   overdue: flag,
   sortBy: optionalEnum(["createdAt", "updatedAt", "dueAt", "priority", "status"]),
