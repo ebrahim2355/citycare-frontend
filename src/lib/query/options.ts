@@ -50,6 +50,7 @@ export const queryKeys = {
   auditLogs: (filters: AuditFilters) => ["audit-logs", filters] as const,
   messages: ["messages"] as const,
   messageList: (filters: MessageFilters) => ["messages", "list", filters] as const,
+  newMessageCount: ["messages", "new-count"] as const,
 };
 
 export const sessionQuery = () =>
@@ -151,5 +152,11 @@ export const adminQueries = {
       queryKey: queryKeys.messageList(filters),
       queryFn: () => fetcher.list<ContactMessage>("/admin/messages", { ...filters, limit: PAGE_SIZE }),
       placeholderData: keepPreviousData,
+    }),
+  newMessageCount: (fetcher: Fetcher = clientFetcher) =>
+    queryOptions({
+      queryKey: queryKeys.newMessageCount,
+      queryFn: async () => (await fetcher.list<ContactMessage>("/admin/messages", { status: "NEW", limit: 1 })).meta.total,
+      staleTime: 60 * 1000,
     }),
 };

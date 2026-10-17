@@ -5,12 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isNavActive, NAVIGATION, type NavItem } from "@/components/dashboard/nav-config";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { statsQueries } from "@/lib/query/options";
+import { adminQueries } from "@/lib/query/options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types";
 
 function MessagesBadge({ collapsed }: { collapsed: boolean }) {
-  const { data } = useQuery({ ...statsQueries.admin(), select: (stats) => stats.messages.new });
+  const { data } = useQuery(adminQueries.newMessageCount());
 
   if (!data) {
     return null;
