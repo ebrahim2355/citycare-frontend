@@ -16,7 +16,7 @@ export function Providers({ children }: { children: ReactNode }) {
           <RouteProgress />
           {children}
           <TransitionOverlay />
-          <Toaster richColors closeButton position="top-right" />
+          <Toaster closeButton position="top-right" />
         </TooltipProvider>
       </QueryProvider>
     </ThemeProvider>
