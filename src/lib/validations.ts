@@ -139,3 +139,30 @@ export const editComplaintSchema = z.object({
 });
 
 export type EditComplaintValues = z.infer<typeof editComplaintSchema>;
+
+export const createUserSchema = z
+  .object({
+    name: nameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+    role: z.enum(["STAFF", "ADMIN"], "Choose a role"),
+    departmentId: z.string().optional(),
+    phone: phoneSchema,
+  })
+  .refine((values) => values.role !== "STAFF" || Boolean(values.departmentId), {
+    path: ["departmentId"],
+    message: "A staff member needs a department",
+  });
+
+export const changeRoleSchema = z
+  .object({
+    role: z.enum(["CITIZEN", "STAFF", "ADMIN"], "Choose a role"),
+    departmentId: z.string().optional(),
+  })
+  .refine((values) => values.role !== "STAFF" || Boolean(values.departmentId), {
+    path: ["departmentId"],
+    message: "A staff member needs a department",
+  });
+
+export type CreateUserValues = z.infer<typeof createUserSchema>;
+export type ChangeRoleValues = z.infer<typeof changeRoleSchema>;

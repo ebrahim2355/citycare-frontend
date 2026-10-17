@@ -15,7 +15,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 
 interface ConfirmDialogProps {
-  trigger: ReactNode;
+  trigger?: ReactNode;
   title: string;
   description: ReactNode;
   confirmLabel: string;
@@ -39,7 +39,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
