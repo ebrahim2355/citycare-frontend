@@ -29,7 +29,7 @@ export function ComplaintHeader({ complaint, backHref, backLabel, actions }: Com
             <TrackingCode code={complaint.trackingCode} />
             <span className="text-sm text-muted-foreground"><RelativeTime value={complaint.createdAt} prefix="Reported" /></span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">{complaint.title}</h1>
+          <h1 className="font-display text-[1.75rem] leading-tight font-semibold text-balance sm:text-[2.1rem]">{complaint.title}</h1>
           <div className="flex flex-wrap gap-2">
             <StatusBadge status={complaint.status} />
             <PriorityBadge priority={complaint.priority} />

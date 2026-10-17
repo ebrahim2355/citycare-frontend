@@ -38,9 +38,9 @@ import { CONTACT_TOPICS } from "@/lib/validations";
 import type { ContactMessage, ContactStatus, Paginated, ReplyResult } from "@/types";
 
 const STATUS_STYLE: Record<ContactStatus, { label: string; className: string }> = {
-  NEW: { label: "New", className: "bg-primary/12 text-primary" },
-  REPLIED: { label: "Replied", className: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300" },
-  CLOSED: { label: "Closed", className: "bg-zinc-500/12 text-zinc-700 dark:text-zinc-300" },
+  NEW: { label: "New", className: "border-primary/25 bg-accent text-accent-foreground" },
+  REPLIED: { label: "Replied", className: "border-emerald-300/80 bg-emerald-50 text-emerald-800 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-200" },
+  CLOSED: { label: "Closed", className: "border-zinc-300/80 bg-zinc-50 text-zinc-800 dark:border-zinc-400/25 dark:bg-zinc-400/10 dark:text-zinc-200" },
 };
 
 const topicLabel = (topic: string) => CONTACT_TOPICS.find((item) => item.value === topic)?.label ?? topic;
@@ -137,8 +137,8 @@ function MessageCard({ message }: { message: ContactMessage }) {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium", style.className)}>{style.label}</span>
-            <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">{topicLabel(message.topic)}</span>
+            <span className={cn("rounded-md border px-2 py-0.5 text-xs font-medium", style.className)}>{style.label}</span>
+            <span className="rounded-md border bg-muted/50 px-2 py-0.5 text-xs font-medium text-muted-foreground">{topicLabel(message.topic)}</span>
           </div>
           <h2 className="font-semibold">{message.subject}</h2>
           <p className="text-sm text-muted-foreground">

@@ -107,7 +107,7 @@ function WorkloadPreview() {
                   <UserAvatar name={staff.name} size={26} />
                   <span className="truncate font-medium">{staff.name}</span>
                   {!staff.acceptsAssignments && (
-                    <span className="rounded-full bg-amber-500/14 px-2 py-0.5 text-[11px] font-medium text-amber-800 dark:text-amber-200">Paused</span>
+                    <span className="rounded-md border border-amber-300/80 bg-amber-50 px-1.5 py-0.5 text-[11px] font-medium text-amber-800 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-200">Paused</span>
                   )}
                 </span>
                 <span className="shrink-0 text-muted-foreground tabular-nums">

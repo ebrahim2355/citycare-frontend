@@ -208,8 +208,8 @@ export function AdminCategories() {
       cell: (category) => (
         <span
           className={cn(
-            "inline-flex h-6 items-center rounded-full px-2.5 text-xs font-medium",
-            category.type === "SERVICE" ? "bg-amber-500/14 text-amber-800 dark:text-amber-200" : "bg-sky-500/12 text-sky-700 dark:text-sky-300"
+            "inline-flex h-6 items-center rounded-md border px-2 text-xs font-medium",
+            category.type === "SERVICE" ? "border-brass/40 bg-brass/10 text-brass-strong" : "border-primary/20 bg-accent text-accent-foreground"
           )}
         >
           {category.type === "SERVICE" ? "Paid service" : "Complaint"}

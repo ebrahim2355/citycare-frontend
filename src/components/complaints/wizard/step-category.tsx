@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { BadgeDollarSign, Clock3, MessageSquareWarning } from "lucide-react";
 import { Controller, type UseFormReturn } from "react-hook-form";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { ErrorState } from "@/components/shared/error-state";
 import { FieldError } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -100,11 +101,19 @@ export function StepCategory({ form, kind, onKindChange }: StepCategoryProps) {
                           )}
                         >
                           <RadioGroupItem id={`category-${category.id}`} value={category.id} className="mt-1" />
+                          <span
+                            className={cn(
+                              "flex size-9 shrink-0 items-center justify-center rounded-lg",
+                              category.type === "SERVICE" ? "bg-brass/15 text-brass-strong" : "bg-accent text-accent-foreground"
+                            )}
+                          >
+                            <CategoryIcon name={category.name} className="size-4.5" />
+                          </span>
                           <span className="min-w-0 flex-1 space-y-1">
                             <span className="flex items-center justify-between gap-2">
                               <span className="font-medium">{category.name}</span>
                               {category.type === "SERVICE" && (
-                                <span className="rounded-full bg-amber-500/14 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">
+                                <span className="rounded-md border border-brass/40 bg-brass/10 px-2 py-0.5 text-xs font-semibold text-brass-strong tabular-nums">
                                   {formatMoney(category.fee)}
                                 </span>
                               )}

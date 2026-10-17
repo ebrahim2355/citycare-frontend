@@ -34,9 +34,9 @@ import { cn } from "@/lib/utils";
 import type { Paginated, User } from "@/types";
 
 const ROLE_TONE = {
-  CITIZEN: "bg-sky-500/12 text-sky-700 dark:text-sky-300",
-  STAFF: "bg-violet-500/12 text-violet-700 dark:text-violet-300",
-  ADMIN: "bg-teal-600/12 text-teal-800 dark:text-teal-300",
+  CITIZEN: "border-sky-300/80 bg-sky-50 text-sky-800 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-200",
+  STAFF: "border-violet-300/80 bg-violet-50 text-violet-800 dark:border-violet-400/25 dark:bg-violet-400/10 dark:text-violet-200",
+  ADMIN: "border-teal-300/80 bg-teal-50 text-teal-800 dark:border-teal-400/25 dark:bg-teal-400/10 dark:text-teal-200",
 };
 
 function useStatusToggle() {
@@ -179,7 +179,7 @@ export function AdminUsers() {
       key: "role",
       header: "Role",
       cell: (user) => (
-        <span className={cn("inline-flex h-6 items-center rounded-full px-2.5 text-xs font-medium", ROLE_TONE[user.role])}>{ROLE_LABEL[user.role]}</span>
+        <span className={cn("inline-flex h-6 items-center rounded-md border px-2 text-xs font-medium", ROLE_TONE[user.role])}>{ROLE_LABEL[user.role]}</span>
       ),
     },
     { key: "department", header: "Department", cell: (user) => user.department?.name ?? <span className="text-muted-foreground">—</span> },
@@ -189,8 +189,8 @@ export function AdminUsers() {
       cell: (user) => (
         <span
           className={cn(
-            "inline-flex h-6 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium",
-            user.status === "ACTIVE" ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300" : "bg-red-500/12 text-red-700 dark:text-red-300"
+            "inline-flex h-6 items-center gap-1.5 rounded-md border px-2 text-xs font-medium",
+            user.status === "ACTIVE" ? "border-emerald-300/80 bg-emerald-50 text-emerald-800 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-200" : "border-red-300/80 bg-red-50 text-red-800 dark:border-red-400/25 dark:bg-red-400/10 dark:text-red-200"
           )}
         >
           <span className={cn("size-1.5 rounded-full", user.status === "ACTIVE" ? "bg-emerald-500" : "bg-red-500")} />
@@ -294,11 +294,11 @@ export function AdminUsers() {
                   {user.id !== me?.id && <UserActions user={user} />}
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className={cn("inline-flex h-6 items-center rounded-full px-2.5 font-medium", ROLE_TONE[user.role])}>{ROLE_LABEL[user.role]}</span>
+                  <span className={cn("inline-flex h-6 items-center rounded-md border px-2 font-medium", ROLE_TONE[user.role])}>{ROLE_LABEL[user.role]}</span>
                   <span
                     className={cn(
-                      "inline-flex h-6 items-center rounded-full px-2.5 font-medium",
-                      user.status === "ACTIVE" ? "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300" : "bg-red-500/12 text-red-700 dark:text-red-300"
+                      "inline-flex h-6 items-center rounded-md border px-2 font-medium",
+                      user.status === "ACTIVE" ? "border-emerald-300/80 bg-emerald-50 text-emerald-800 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-200" : "border-red-300/80 bg-red-50 text-red-800 dark:border-red-400/25 dark:bg-red-400/10 dark:text-red-200"
                     )}
                   >
                     {user.status === "ACTIVE" ? "Active" : "Blocked"}

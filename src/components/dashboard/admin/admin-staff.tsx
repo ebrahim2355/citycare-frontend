@@ -22,18 +22,18 @@ import type { StaffWorkload } from "@/types";
 
 const availability = (staff: StaffWorkload) => {
   if (staff.status === "BLOCKED") {
-    return { label: "Blocked", className: "bg-red-500/12 text-red-700 dark:text-red-300" };
+    return { label: "Blocked", className: "border-red-300/80 bg-red-50 text-red-800 dark:border-red-400/25 dark:bg-red-400/10 dark:text-red-200" };
   }
 
   if (!staff.acceptsAssignments) {
-    return { label: "On leave", className: "bg-amber-500/14 text-amber-800 dark:text-amber-200" };
+    return { label: "On leave", className: "border-amber-300/80 bg-amber-50 text-amber-800 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-200" };
   }
 
   if (staff.activeAssignments >= staff.capacity) {
-    return { label: "Full", className: "bg-orange-500/12 text-orange-700 dark:text-orange-300" };
+    return { label: "Full", className: "border-orange-300/80 bg-orange-50 text-orange-800 dark:border-orange-400/25 dark:bg-orange-400/10 dark:text-orange-200" };
   }
 
-  return { label: "Available", className: "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300" };
+  return { label: "Available", className: "border-emerald-300/80 bg-emerald-50 text-emerald-800 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-emerald-200" };
 };
 
 export function AdminStaff() {
@@ -104,7 +104,7 @@ export function AdminStaff() {
                   <p className="truncate font-semibold">{member.name}</p>
                   <p className="truncate text-sm text-muted-foreground">{member.department?.name ?? "No department"}</p>
                 </div>
-                <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", state.className)}>{state.label}</span>
+                <span className={cn("rounded-md border px-2 py-0.5 text-xs font-medium", state.className)}>{state.label}</span>
               </div>
               <div className="space-y-1.5">
                 <div className="flex justify-between text-sm">
