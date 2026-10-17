@@ -252,6 +252,14 @@
   }
 }
 
+@utility header-elevate {
+  @supports (animation-timeline: scroll()) {
+    animation: header-elevate linear both;
+    animation-timeline: scroll();
+    animation-range: 0 96px;
+  }
+}
+
 @utility link-underline {
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 0% 1px;
@@ -311,6 +319,15 @@
   }
   100% {
     transform: translateX(310%);
+  }
+}
+
+@keyframes header-elevate {
+  from {
+    box-shadow: 0 0 0 0 rgb(15 23 42 / 0);
+  }
+  to {
+    box-shadow: 0 10px 24px -16px rgb(15 23 42 / 0.28);
   }
 }
 

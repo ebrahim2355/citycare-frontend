@@ -1,3 +1,4 @@
+import { CreditCard, Phone, ShieldCheck } from "lucide-react";
 import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { Logo } from "@/components/layout/logo";
@@ -8,15 +9,15 @@ const columns = [
     title: "Platform",
     links: [
       { href: "/services", label: "Services and fees" },
-      { href: "/track", label: "Track a complaint" },
-      { href: "/faq", label: "FAQ" },
+      { href: "/track", label: "Track a report" },
+      { href: "/faq", label: "Questions and answers" },
     ],
   },
   {
     title: "City",
     links: [
       { href: "/about", label: "About CityCare" },
-      { href: "/contact", label: "Contact the team" },
+      { href: "/contact", label: "Contact the city team" },
       { href: SITE.apiDocsUrl, label: "Public API docs" },
     ],
   },
@@ -39,24 +40,33 @@ async function CurrentYear() {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t bg-card">
-      <div className="container-page grid gap-10 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-        <div className="space-y-3">
-          <Logo />
-          <p className="max-w-xs text-sm text-muted-foreground">
-            One place for the people of {SITE.city} to report problems, request city services and see every step until the work is done.
+    <footer className="relative overflow-hidden border-t border-transparent bg-navy text-navy-foreground dark:border-white/8">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgb(255_255_255/0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgb(255_255_255/0.04)_1px,transparent_1px)] bg-size-[44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_70%)]"
+      />
+      <div className="container-page relative grid gap-12 py-14 md:grid-cols-[1.5fr_repeat(3,1fr)]">
+        <div className="space-y-5">
+          <Logo surface="dark" tagline />
+          <p className="max-w-xs text-sm leading-relaxed text-navy-muted">
+            One place for the people of {SITE.city} to report problems, request city services and follow every step until the work is
+            done.
           </p>
-          <p className="text-sm text-muted-foreground">
-            In an emergency call <span className="font-semibold text-foreground">999</span>.
-          </p>
+          <a
+            href="tel:999"
+            className="inline-flex items-center gap-2.5 rounded-lg border border-white/10 bg-white/5 px-3.5 py-2 text-sm transition-colors hover:bg-white/10"
+          >
+            <Phone className="size-4 text-brass" aria-hidden />
+            In an emergency call <span className="font-semibold">999</span>
+          </a>
         </div>
         {columns.map((column) => (
-          <div key={column.title} className="space-y-3">
-            <h2 className="text-sm font-semibold">{column.title}</h2>
-            <ul className="space-y-2">
+          <div key={column.title} className="space-y-4">
+            <h2 className="text-xs font-semibold tracking-[0.14em] text-navy-muted uppercase">{column.title}</h2>
+            <ul className="space-y-2.5">
               {column.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <Link href={link.href} className="link-underline text-sm text-navy-foreground/85 transition-colors hover:text-white">
                     {link.label}
                   </Link>
                 </li>
@@ -65,12 +75,21 @@ export function SiteFooter() {
           </div>
         ))}
       </div>
-      <div className="border-t">
-        <div className="container-page flex flex-col gap-2 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative border-t border-white/10">
+        <div className="container-page flex flex-col gap-3 py-5 text-xs text-navy-muted sm:flex-row sm:items-center sm:justify-between">
           <p>
             © <CurrentYear /> {SITE.name}. Built for the city of {SITE.city}.
           </p>
-          <p>Payments are handled by Stripe. Card details never touch our servers.</p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <span className="inline-flex items-center gap-1.5">
+              <CreditCard className="size-3.5" aria-hidden />
+              Payments by Stripe
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="size-3.5" aria-hidden />
+              Card details never touch our servers
+            </span>
+          </div>
         </div>
       </div>
     </footer>
