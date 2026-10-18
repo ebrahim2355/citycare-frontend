@@ -30,7 +30,7 @@ export function PublicHero({ page, title, description, actions, aside, className
           </span>
         </nav>
         <div className={cn("grid gap-10", aside && "lg:grid-cols-[1.15fr_1fr] lg:items-center lg:gap-16")}>
-          <div className="min-w-0 animate-fade-up space-y-5">
+          <div className="min-w-0 space-y-5">
             <h1 className="max-w-3xl font-display text-4xl leading-[1.08] font-semibold text-balance text-white sm:text-5xl">{title}</h1>
             {description && <p className="max-w-2xl text-lg leading-relaxed text-pretty text-navy-muted">{description}</p>}
             {actions && <div className="flex flex-wrap gap-3 pt-2">{actions}</div>}

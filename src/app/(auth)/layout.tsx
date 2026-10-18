@@ -1,6 +1,7 @@
 import { ArrowLeft, CircleCheck, Clock3, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { LogoMark, Logo } from "@/components/layout/logo";
+import { RouteTransition } from "@/components/layout/route-transition";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { formatHours, formatNumber } from "@/lib/format";
 import { getPublicStats } from "@/lib/server/public-api";
@@ -79,7 +80,9 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           </div>
         </header>
         <main id="main" className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
-          <div className="w-full max-w-xl">{children}</div>
+          <div className="w-full max-w-xl">
+            <RouteTransition>{children}</RouteTransition>
+          </div>
         </main>
         <footer className="px-4 pb-6 text-center text-xs text-muted-foreground sm:px-8">
           Your session is kept in secure, HTTP-only cookies that page scripts cannot read.

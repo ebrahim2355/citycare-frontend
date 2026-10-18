@@ -138,7 +138,7 @@ export function Hero({ stats }: { stats: PublicStats | null }) {
         <StreetMap className="absolute top-0 right-0 h-full w-full text-white/[0.07] lg:w-[62%]" />
       </div>
       <div className="container-page grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-24">
-        <div className="min-w-0 animate-fade-up space-y-8">
+        <div className="min-w-0 space-y-8">
           {stats && (
             <p className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-navy-foreground backdrop-blur">
               <LiveDot />
