@@ -114,7 +114,7 @@ export default function FaqPage() {
       <div className="container-page grid gap-10 py-12 sm:py-16 lg:grid-cols-[1fr_300px] lg:gap-14">
         <div className="space-y-12">
           {groups.map((group) => (
-            <section key={group.id} id={group.id} className="reveal scroll-mt-24 space-y-4" aria-labelledby={`faq-${group.id}`}>
+            <section key={group.id} id={group.id} className="scroll-mt-24 space-y-4" aria-labelledby={`faq-${group.id}`}>
               <h2 id={`faq-${group.id}`} className="font-display text-2xl font-semibold">
                 {group.title}
               </h2>

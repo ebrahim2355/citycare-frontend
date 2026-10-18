@@ -68,12 +68,12 @@ function TrackResult({ code }: { code: string }) {
       <ProgressSteps status={data.status} updates={data.updates} />
       <dl className="grid gap-4 sm:grid-cols-2">
         {facts.map((fact) => (
-          <div key={fact.label} className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
-            <fact.icon className="mt-0.5 size-4 text-muted-foreground" aria-hidden />
-            <div>
-              <dt className="text-xs text-muted-foreground">{fact.label}</dt>
-              <dd className="text-sm font-medium">{fact.value}</dd>
-            </div>
+          <div key={fact.label} className="space-y-1 rounded-lg bg-muted/50 p-3">
+            <dt className="flex items-center gap-2 text-xs text-muted-foreground">
+              <fact.icon className="size-4" aria-hidden />
+              {fact.label}
+            </dt>
+            <dd className="pl-6 text-sm font-medium">{fact.value}</dd>
           </div>
         ))}
       </dl>

@@ -81,7 +81,7 @@ export function SidebarNav({ role, collapsed = false, onNavigate }: { role: Role
           {section.title && (
             <p
               className={cn(
-                "px-3 pb-1 text-[11px] font-semibold tracking-[0.14em] text-sidebar-foreground/50 uppercase",
+                "px-3 pb-1 text-[11px] font-semibold tracking-[0.14em] text-sidebar-foreground/75 uppercase",
                 collapsed && "sr-only"
               )}
             >

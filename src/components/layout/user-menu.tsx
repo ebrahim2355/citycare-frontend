@@ -25,9 +25,10 @@ export function UserMenu({ user, showName = false }: { user: User; showName?: bo
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-10 gap-2 rounded-full px-1.5 sm:pr-3" aria-label="Open account menu">
+        <Button variant="ghost" className="h-10 gap-2 rounded-full px-1.5 sm:pr-3" aria-label={showName ? undefined : "Open account menu"}>
           <UserAvatar name={user.name} src={user.avatarUrl} size={30} />
           {showName && <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">{user.name}</span>}
+          {showName && <span className="sr-only">Open account menu</span>}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">

@@ -41,7 +41,7 @@ export function Logo({ href = "/", className, compact = false, surface = "auto",
   const dark = surface === "dark";
 
   return (
-    <Link href={href} aria-label="CityCare home" className={cn("flex items-center gap-2.5 rounded-lg", className)}>
+    <Link href={href} aria-label={compact ? "CityCare home" : undefined} className={cn("flex items-center gap-2.5 rounded-lg", className)}>
       <LogoMark surface={surface} />
       {!compact && (
         <span className="flex flex-col">

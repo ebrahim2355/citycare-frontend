@@ -10,12 +10,12 @@ interface UserAvatarProps {
 }
 
 const palette = [
-  "bg-teal-600 text-white",
-  "bg-sky-600 text-white",
-  "bg-violet-600 text-white",
-  "bg-amber-600 text-white",
-  "bg-rose-600 text-white",
-  "bg-emerald-600 text-white",
+  "bg-teal-700 text-white",
+  "bg-sky-700 text-white",
+  "bg-violet-700 text-white",
+  "bg-amber-700 text-white",
+  "bg-rose-700 text-white",
+  "bg-emerald-700 text-white",
 ];
 
 const colorFor = (name: string) => palette[[...name].reduce((sum, char) => sum + char.charCodeAt(0), 0) % palette.length];
