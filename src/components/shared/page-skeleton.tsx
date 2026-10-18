@@ -386,6 +386,22 @@ export function WizardSkeleton() {
   );
 }
 
+export function PaymentSkeleton() {
+  return (
+    <Card role="status" data-route-loading className="mx-auto w-full max-w-lg animate-fade-in items-center gap-5 px-6 py-10 shadow-raised">
+      <span className="sr-only">Loading</span>
+      <Skeleton className="size-18 rounded-full" />
+      <Skeleton className="h-8 w-56" />
+      <Skeleton className="h-4 w-72 max-w-full" />
+      <Skeleton className="h-44 w-full rounded-xl" />
+      <div className="grid w-full gap-2 sm:grid-cols-2">
+        <Skeleton className="h-10 rounded-lg" />
+        <Skeleton className="h-10 rounded-lg" />
+      </div>
+    </Card>
+  );
+}
+
 export function PublicPageSkeleton({ cards = 4 }: { cards?: number }) {
   return (
     <div role="status" data-route-loading className="animate-fade-in [animation-delay:80ms]">
