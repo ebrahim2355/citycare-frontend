@@ -1,9 +1,13 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ban, FilterX, MoreHorizontal, ShieldCheck, Trash2, UserCog, Users } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { ChangeRoleDialog, CreateUserDialog } from "@/components/dashboard/admin/user-dialogs";
+import { TextareaField } from "@/components/forms/form-fields";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
 import { type Column, DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -21,7 +25,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Textarea } from "@/components/ui/textarea";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useSession } from "@/hooks/use-session";
 import { useUrlFilters } from "@/hooks/use-url-filters";
@@ -75,11 +78,17 @@ function useStatusToggle() {
   });
 }
 
+const blockSchema = z.object({
+  reason: z.string().trim().max(300, "Keep it under 300 characters"),
+});
+
+type BlockValues = z.infer<typeof blockSchema>;
+
 function UserActions({ user }: { user: User }) {
   const [roleOpen, setRoleOpen] = useState(false);
   const [blockOpen, setBlockOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [reason, setReason] = useState("");
+  const blockForm = useForm<BlockValues>({ resolver: zodResolver(blockSchema), defaultValues: { reason: "" } });
   const toggle = useStatusToggle();
   const remove = useApiMutation({
     mutationFn: () => api.delete(`/admin/users/${user.id}`),
@@ -113,29 +122,33 @@ function UserActions({ user }: { user: User }) {
       <ChangeRoleDialog user={user} open={roleOpen} onOpenChange={setRoleOpen} />
       <ConfirmDialog
         open={blockOpen}
-        onOpenChange={setBlockOpen}
+        onOpenChange={(value) => {
+          setBlockOpen(value);
+
+          if (!value) {
+            blockForm.reset();
+          }
+        }}
         title={`Block ${user.name}?`}
-        description={
-          <span className="block space-y-3">
-            <span className="block">They are signed out on every device and cannot sign in until you unblock them.</span>
-            <Textarea
-              aria-label="Reason (optional)"
-              placeholder="Reason (optional), kept in the audit log"
-              value={reason}
-              maxLength={300}
-              onChange={(event) => setReason(event.target.value)}
-            />
-          </span>
-        }
+        description="They are signed out on every device and cannot sign in until you unblock them."
         confirmLabel="Block account"
         destructive
         pending={toggle.isPending}
-        onConfirm={() => {
-          toggle.mutate({ user, reason: reason.trim() || undefined });
+        onConfirm={blockForm.handleSubmit(({ reason }) => {
+          toggle.mutate({ user, reason: reason || undefined });
           setBlockOpen(false);
-          setReason("");
-        }}
-      />
+          blockForm.reset();
+        })}
+      >
+        <TextareaField
+          control={blockForm.control}
+          name="reason"
+          label="Reason (optional)"
+          placeholder="Reason (optional), kept in the audit log"
+          rows={3}
+          maxLength={300}
+        />
+      </ConfirmDialog>
       <ConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}

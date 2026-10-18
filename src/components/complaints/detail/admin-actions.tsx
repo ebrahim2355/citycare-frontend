@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRightLeft, CheckCheck, CircleSlash, Trash2, UserCheck, Wand2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { SelectField, TextareaField } from "@/components/forms/form-fields";
 import { ConfirmDialog } from "@/components/shared/confirm-dialog";
@@ -27,7 +27,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useAssignComplaint, useChangePriority, useChangeStatus } from "@/hooks/use-complaint-actions";
 import { api } from "@/lib/api/client";
@@ -37,22 +36,49 @@ import { adminQueries, catalogQueries, queryKeys } from "@/lib/query/options";
 import { cn } from "@/lib/utils";
 import type { ComplaintDetail, Priority } from "@/types";
 
+const assignSchema = z.object({
+  staffId: z.string(),
+  note: z
+    .string()
+    .trim()
+    .max(300, "Keep it under 300 characters")
+    .refine((value) => value.length === 0 || value.length >= 3, "Write at least 3 characters or leave it empty"),
+});
+
+type AssignValues = z.infer<typeof assignSchema>;
+
 function AssignDialog({ complaint }: { complaint: ComplaintDetail }) {
   const [open, setOpen] = useState(false);
-  const [staffId, setStaffId] = useState("");
-  const [note, setNote] = useState("");
+  const form = useForm<AssignValues>({ resolver: zodResolver(assignSchema), defaultValues: { staffId: "", note: "" } });
+  const staffId = useWatch({ control: form.control, name: "staffId" });
   const workload = useQuery({ ...adminQueries.workload({ departmentId: complaint.department.id }), enabled: open });
   const assign = useAssignComplaint();
   const candidates = (workload.data ?? []).filter((staff) => staff.id !== complaint.assignedStaff?.id);
 
   const submit = (automatic: boolean) =>
-    assign.mutate(
-      { id: complaint.id, staffId: automatic ? undefined : staffId, note: note.trim() || undefined },
-      { onSuccess: () => setOpen(false) }
+    form.handleSubmit((values) =>
+      assign.mutate(
+        { id: complaint.id, staffId: automatic ? undefined : values.staffId, note: values.note || undefined },
+        {
+          onSuccess: () => {
+            setOpen(false);
+            form.reset();
+          },
+        }
+      )
     );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        setOpen(value);
+
+        if (!value) {
+          form.reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="w-full justify-start" variant={complaint.assignedStaff ? "outline" : "default"}>
           <UserCheck data-icon="inline-start" />
@@ -73,47 +99,50 @@ function AssignDialog({ complaint }: { complaint: ComplaintDetail }) {
               Nobody else works in this department. Transfer the report or add a staff member.
             </p>
           )}
-          <RadioGroup value={staffId} onValueChange={setStaffId} aria-label="Staff member">
-            {candidates.map((staff) => (
-              <label
-                key={staff.id}
-                htmlFor={`staff-${staff.id}`}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl border p-3 transition-colors",
-                  staff.isAvailable ? "cursor-pointer hover:border-primary/50" : "opacity-60",
-                  staffId === staff.id && "border-primary bg-primary/5"
-                )}
-              >
-                <RadioGroupItem id={`staff-${staff.id}`} value={staff.id} disabled={!staff.isAvailable} />
-                <UserAvatar name={staff.name} size={32} />
-                <span className="min-w-0 flex-1 space-y-1">
-                  <span className="flex items-center justify-between gap-2 text-sm">
-                    <span className="truncate font-medium">{staff.name}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                      {staff.activeAssignments}/{staff.capacity} active
+          <Controller
+            control={form.control}
+            name="staffId"
+            render={({ field }) => (
+              <RadioGroup value={field.value} onValueChange={field.onChange} aria-label="Staff member">
+                {candidates.map((staff) => (
+                  <label
+                    key={staff.id}
+                    htmlFor={`staff-${staff.id}`}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl border p-3 transition-colors",
+                      staff.isAvailable ? "cursor-pointer hover:border-primary/50" : "opacity-60",
+                      staffId === staff.id && "border-primary bg-primary/5"
+                    )}
+                  >
+                    <RadioGroupItem id={`staff-${staff.id}`} value={staff.id} disabled={!staff.isAvailable} />
+                    <UserAvatar name={staff.name} size={32} />
+                    <span className="min-w-0 flex-1 space-y-1">
+                      <span className="flex items-center justify-between gap-2 text-sm">
+                        <span className="truncate font-medium">{staff.name}</span>
+                        <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                          {staff.activeAssignments}/{staff.capacity} active
+                        </span>
+                      </span>
+                      <Progress value={(staff.activeAssignments / staff.capacity) * 100} className="h-1.5" />
+                      {!staff.isAvailable && (
+                        <span className="block text-xs text-amber-700 dark:text-amber-300">
+                          {staff.status === "BLOCKED" ? "Blocked" : !staff.acceptsAssignments ? "On leave" : "At full capacity"}
+                        </span>
+                      )}
                     </span>
-                  </span>
-                  <Progress value={(staff.activeAssignments / staff.capacity) * 100} className="h-1.5" />
-                  {!staff.isAvailable && (
-                    <span className="block text-xs text-amber-700 dark:text-amber-300">
-                      {staff.status === "BLOCKED" ? "Blocked" : !staff.acceptsAssignments ? "On leave" : "At full capacity"}
-                    </span>
-                  )}
-                </span>
-              </label>
-            ))}
-          </RadioGroup>
+                  </label>
+                ))}
+              </RadioGroup>
+            )}
+          />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="assign-note">Note for the timeline (optional)</Label>
-          <Textarea id="assign-note" value={note} onChange={(event) => setNote(event.target.value)} maxLength={300} rows={2} />
-        </div>
+        <TextareaField control={form.control} name="note" label="Note for the timeline (optional)" rows={2} maxLength={300} />
         <DialogFooter className="gap-2 sm:justify-between">
-          <Button variant="outline" onClick={() => submit(true)} disabled={assign.isPending}>
+          <Button variant="outline" onClick={submit(true)} disabled={assign.isPending}>
             <Wand2 data-icon="inline-start" />
             Auto assign
           </Button>
-          <Button onClick={() => submit(false)} disabled={!staffId || assign.isPending}>
+          <Button onClick={submit(false)} disabled={!staffId || assign.isPending}>
             {assign.isPending && <Spinner />}
             Assign selected
           </Button>

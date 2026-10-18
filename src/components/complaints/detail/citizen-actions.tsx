@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/dialog";
 import { FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/lib/api/client";
 import { EDITABLE_STATUSES, MAX_REOPENS, PRIORITY_META, REMOVABLE_STATUSES, REOPEN_WINDOW_DAYS } from "@/lib/complaint-meta";
@@ -126,25 +125,41 @@ function EditDialog({ complaint }: { complaint: ComplaintDetail }) {
   );
 }
 
+const cancelSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .max(300, "Keep it under 300 characters")
+    .refine((value) => value.length === 0 || value.length >= 5, "Write at least 5 characters or leave it empty"),
+});
+
+type CancelValues = z.infer<typeof cancelSchema>;
+
 function CancelButton({ complaint }: { complaint: ComplaintDetail }) {
   const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState("");
   const store = useComplaintCache(complaint.id);
+  const form = useForm<CancelValues>({ resolver: zodResolver(cancelSchema), defaultValues: { reason: "" } });
   const cancel = useApiMutation({
-    mutationFn: async () =>
-      (await api.post<ComplaintDetail>(`/complaints/${complaint.id}/cancel`, reason.trim() ? { reason: reason.trim() } : {})).data,
+    mutationFn: async ({ reason }: CancelValues) =>
+      (await api.post<ComplaintDetail>(`/complaints/${complaint.id}/cancel`, reason ? { reason } : {})).data,
     successMessage: (updated) => (updated.paymentStatus === "REFUNDED" ? "Report cancelled and the fee refunded" : "Report cancelled"),
     onSuccess: (updated) => {
       store(updated);
       setOpen(false);
+      form.reset();
     },
   });
-  const tooShort = reason.trim().length > 0 && reason.trim().length < 5;
 
   return (
     <ConfirmDialog
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(value) => {
+        setOpen(value);
+
+        if (!value) {
+          form.reset();
+        }
+      }}
       trigger={
         <Button variant="outline">
           <Ban data-icon="inline-start" />
@@ -152,27 +167,21 @@ function CancelButton({ complaint }: { complaint: ComplaintDetail }) {
         </Button>
       }
       title="Cancel this report?"
-      description={
-        <span className="block space-y-3">
-          <span className="block">
-            The city team will stop working on it.
-            {complaint.paymentStatus === "PAID" ? " The fee you paid is refunded to your card." : ""}
-          </span>
-          <Textarea
-            aria-label="Reason (optional)"
-            placeholder="Reason (optional), for example: it was fixed by the building owner"
-            value={reason}
-            onChange={(event) => setReason(event.target.value)}
-            maxLength={300}
-          />
-          {tooShort && <span className="block text-xs text-destructive">Write at least 5 characters or leave it empty.</span>}
-        </span>
-      }
+      description={`The city team will stop working on it.${complaint.paymentStatus === "PAID" ? " The fee you paid is refunded to your card." : ""}`}
       confirmLabel="Cancel report"
       destructive
       pending={cancel.isPending}
-      onConfirm={() => !tooShort && cancel.mutate()}
-    />
+      onConfirm={form.handleSubmit((values) => cancel.mutate(values))}
+    >
+      <TextareaField
+        control={form.control}
+        name="reason"
+        label="Reason (optional)"
+        placeholder="Reason (optional), for example: it was fixed by the building owner"
+        rows={3}
+        maxLength={300}
+      />
+    </ConfirmDialog>
   );
 }
 
