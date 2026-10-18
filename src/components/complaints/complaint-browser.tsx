@@ -67,7 +67,7 @@ export function ComplaintBrowser({ variant, basePath, emptyAction, rowActions }:
     {
       key: "report",
       header: "Report",
-      className: "min-w-64",
+      className: "min-w-56",
       cell: (complaint) => (
         <Link href={`${basePath}/${complaint.id}`} className="group block space-y-0.5">
           <span className="font-mono text-xs text-muted-foreground">{complaint.trackingCode}</span>
@@ -230,6 +230,7 @@ export function ComplaintBrowser({ variant, basePath, emptyAction, rowActions }:
             fetching={list.isPlaceholderData}
             empty={empty}
             caption="Reports"
+            breakpoint="xl"
             renderMobile={(complaint) => (
               <ComplaintCard complaint={complaint} href={`${basePath}/${complaint.id}`} showCitizen={variant !== "citizen"} />
             )}

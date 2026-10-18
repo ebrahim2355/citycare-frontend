@@ -173,7 +173,7 @@ export function CommandPalette({ role }: { role: Role }) {
       <button
         type="button"
         onClick={() => changeOpen(true)}
-        className="hidden h-9 w-60 items-center gap-2 rounded-lg border bg-card px-3 text-sm text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground md:flex lg:w-72"
+        className="hidden h-9 w-52 items-center gap-2 rounded-lg border bg-card px-3 text-sm text-muted-foreground shadow-xs transition-colors hover:bg-muted hover:text-foreground md:flex xl:w-72"
       >
         <Search className="size-4" aria-hidden />
         <span className="truncate">Search or jump to…</span>

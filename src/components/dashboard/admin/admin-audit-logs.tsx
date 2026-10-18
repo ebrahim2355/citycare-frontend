@@ -52,7 +52,7 @@ export function AdminAuditLogs() {
   const active = countActiveFilters(filters);
 
   const columns: Column<AuditLog>[] = [
-    { key: "time", header: "When", className: "whitespace-nowrap", cell: (log) => <span className="text-sm">{formatDateTime(log.createdAt)}</span> },
+    { key: "time", header: "When", className: "min-w-28", cell: (log) => <span className="text-sm">{formatDateTime(log.createdAt)}</span> },
     {
       key: "actor",
       header: "Who",
@@ -70,7 +70,7 @@ export function AdminAuditLogs() {
       key: "action",
       header: "Action",
       cell: (log) => (
-        <span className={cn("inline-flex rounded-md px-2 py-0.5 text-xs font-medium whitespace-nowrap", actionTone(log.action))}>
+        <span className={cn("inline-flex rounded-md px-2 py-0.5 text-xs font-medium", actionTone(log.action))}>
           {humanize(log.action)}
         </span>
       ),
@@ -100,7 +100,7 @@ export function AdminAuditLogs() {
 
         return (
           <div className="flex items-start gap-2">
-            <p className="line-clamp-2 text-xs text-muted-foreground">{lines.join(" · ") || "—"}</p>
+            <p className="line-clamp-2 max-w-xs text-xs text-muted-foreground">{lines.join(" · ") || "—"}</p>
             {log.metadata && (
               <Popover>
                 <PopoverTrigger asChild>
@@ -199,6 +199,7 @@ export function AdminAuditLogs() {
             loading={logs.isPending}
             fetching={logs.isPlaceholderData}
             caption="Audit log"
+            breakpoint="xl"
             renderMobile={(log) => (
               <div className="space-y-2 rounded-xl border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">

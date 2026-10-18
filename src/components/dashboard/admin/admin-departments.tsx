@@ -171,6 +171,7 @@ export function AdminDepartments() {
           getRowKey={(department) => department.id}
           loading={departments.isPending}
           caption="Departments"
+          breakpoint="xl"
           renderMobile={(department) => (
             <div className="flex items-start justify-between gap-3 rounded-xl border bg-card p-4">
               <div className="min-w-0 space-y-1">

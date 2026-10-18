@@ -34,7 +34,7 @@ function Breadcrumbs({ user }: { user: User }) {
 
   return (
     <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-sm md:flex">
-      <Link href={home} className="font-medium text-muted-foreground transition-colors hover:text-foreground">
+      <Link href={home} className="font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground">
         {AREA_LABEL[user.role]}
       </Link>
       {current && current.href !== home && (
