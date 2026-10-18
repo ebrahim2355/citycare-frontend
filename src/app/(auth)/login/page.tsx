@@ -3,12 +3,13 @@ import { Suspense } from "react";
 import { AuthHeading } from "@/components/auth/auth-heading";
 import { LoginForm } from "@/components/auth/login-form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Sign in",
   description: "Sign in to CityCare to report problems, follow your reports and manage city work.",
-  alternates: { canonical: "/login" },
-};
+  path: "/login",
+});
 
 export default function LoginPage() {
   return (

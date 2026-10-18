@@ -3,12 +3,14 @@ import { Suspense } from "react";
 import { AuthHeading } from "@/components/auth/auth-heading";
 import { ResetPasswordForm } from "@/components/auth/password-reset-forms";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Choose a new password",
   description: "Set a new password for your CityCare account.",
-  robots: { index: false },
-};
+  path: "/reset-password",
+  index: false,
+});
 
 export default function ResetPasswordPage() {
   return (

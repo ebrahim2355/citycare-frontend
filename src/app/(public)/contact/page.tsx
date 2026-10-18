@@ -4,12 +4,13 @@ import Link from "next/link";
 import { PublicHero } from "@/components/layout/public-hero";
 import { ContactForm } from "@/components/public/contact-form";
 import { Card } from "@/components/ui/card";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact",
   description: "Send a message to the CityCare team about a report, a payment, your account or an idea.",
-  alternates: { canonical: "/contact" },
-};
+  path: "/contact",
+});
 
 const notes = [
   {

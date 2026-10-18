@@ -6,13 +6,14 @@ import { heroOutlineButton, heroPrimaryButton, PublicHero } from "@/components/l
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatHours, formatNumber, pluralize } from "@/lib/format";
+import { pageMetadata } from "@/lib/metadata";
 import { getDepartments, getPublicStats } from "@/lib/server/public-api";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
   description: "Why CityCare exists, how reports move through the city departments and the rules that keep the work fair and open.",
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 const principles = [
   {

@@ -6,15 +6,16 @@ import { CategoryIcon } from "@/components/shared/category-icon";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatMoney, formatSla, pluralize } from "@/lib/format";
+import { pageMetadata } from "@/lib/metadata";
 import { getCategories, getDepartments } from "@/lib/server/public-api";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/types";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Services and fees",
   description: "Every complaint type and paid home service on CityCare, the department that handles it, its target time and its fee.",
-  alternates: { canonical: "/services" },
-};
+  path: "/services",
+});
 
 function CategoryRow({ category }: { category: Category }) {
   const isService = category.type === "SERVICE";

@@ -3,12 +3,13 @@ import { Suspense } from "react";
 import { PublicHero } from "@/components/layout/public-hero";
 import { TrackLookup } from "@/components/public/track-lookup";
 import { Skeleton } from "@/components/ui/skeleton";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Track a report",
   description: "Enter your CityCare tracking code to see the status, the deadline and the history of a report.",
-  alternates: { canonical: "/track" },
-};
+  path: "/track",
+});
 
 export default function TrackPage() {
   return (

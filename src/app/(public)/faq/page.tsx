@@ -6,12 +6,13 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MAX_IMAGE_MB, MAX_IMAGES, MAX_IMAGES_PER_UPLOAD, MAX_REOPENS, REOPEN_WINDOW_DAYS } from "@/lib/complaint-meta";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Frequently asked questions",
   description: "How reporting, tracking, payments, refunds, photos and reopening work on CityCare.",
-  alternates: { canonical: "/faq" },
-};
+  path: "/faq",
+});
 
 const groups = [
   {
