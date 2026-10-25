@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AlarmClock } from "lucide-react";
 import { AttachmentGallery } from "@/components/complaints/detail/attachment-gallery";
 import { ComplaintHeader } from "@/components/complaints/detail/complaint-header";
-import { ComplaintDescription, ComplaintFacts } from "@/components/complaints/detail/complaint-info";
+import { ComplaintDescription, ComplaintFacts, ComplaintMap } from "@/components/complaints/detail/complaint-info";
 import { ComplaintTimeline } from "@/components/complaints/detail/complaint-timeline";
 import { PersonCard } from "@/components/complaints/detail/person-card";
 import { StaffActions } from "@/components/complaints/detail/staff-actions";
@@ -54,6 +54,7 @@ export function StaffComplaintDetail({ id }: { id: string }) {
               </CardContent>
             </Card>
           )}
+          <ComplaintMap complaint={complaint} />
           <ComplaintFacts complaint={complaint} />
         </div>
       </div>

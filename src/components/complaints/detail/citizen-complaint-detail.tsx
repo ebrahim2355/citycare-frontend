@@ -5,7 +5,7 @@ import { HardHat } from "lucide-react";
 import { AttachmentGallery } from "@/components/complaints/detail/attachment-gallery";
 import { CitizenActions } from "@/components/complaints/detail/citizen-actions";
 import { ComplaintHeader } from "@/components/complaints/detail/complaint-header";
-import { ComplaintDescription, ComplaintFacts } from "@/components/complaints/detail/complaint-info";
+import { ComplaintDescription, ComplaintFacts, ComplaintMap } from "@/components/complaints/detail/complaint-info";
 import { ComplaintTimeline } from "@/components/complaints/detail/complaint-timeline";
 import { PaymentPanel } from "@/components/complaints/detail/payment-panel";
 import { ErrorState } from "@/components/shared/error-state";
@@ -80,6 +80,7 @@ export function CitizenComplaintDetail({ id }: { id: string }) {
               </CardContent>
             </Card>
           )}
+          <ComplaintMap complaint={complaint} />
           <ComplaintFacts complaint={complaint} />
         </div>
       </div>

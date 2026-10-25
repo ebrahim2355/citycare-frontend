@@ -1,8 +1,9 @@
-import { Building2, CalendarCheck, CalendarClock, CircleDollarSign, ExternalLink, MapPin, RotateCcw, Tag, Timer } from "lucide-react";
+import { Building2, CalendarCheck, CalendarClock, CircleDollarSign, ExternalLink, MapPin, Navigation, RotateCcw, Tag, Timer } from "lucide-react";
 import type { ReactNode } from "react";
+import { LazyLocationPreview } from "@/components/map/lazy";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mapLink } from "@/lib/areas";
+import { directionsLink, mapLink } from "@/lib/areas";
 import { OPEN_STATUSES } from "@/lib/complaint-meta";
 import { formatDateTime, formatMoney, formatSla } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,50 @@ export function ComplaintDescription({ complaint }: { complaint: ComplaintDetail
             <p className="mt-1 text-sm whitespace-pre-line">{complaint.rejectionReason}</p>
           </div>
         )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function ComplaintMap({ complaint }: { complaint: ComplaintDetail }) {
+  if (complaint.latitude === null || complaint.longitude === null) {
+    return null;
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <MapPin className="size-4.5 text-primary" aria-hidden />
+          Exact spot
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <LazyLocationPreview
+          latitude={complaint.latitude}
+          longitude={complaint.longitude}
+          label={`Map of ${complaint.address}, ${complaint.area}`}
+        />
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium">
+          <a
+            href={directionsLink(complaint.latitude, complaint.longitude)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-primary hover:underline"
+          >
+            <Navigation className="size-3" aria-hidden />
+            Get directions
+          </a>
+          <a
+            href={mapLink(complaint.latitude, complaint.longitude)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground hover:underline"
+          >
+            OpenStreetMap
+            <ExternalLink className="size-3" aria-hidden />
+          </a>
+        </div>
       </CardContent>
     </Card>
   );

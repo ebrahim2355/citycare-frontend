@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AdminActions } from "@/components/complaints/detail/admin-actions";
 import { AttachmentGallery } from "@/components/complaints/detail/attachment-gallery";
 import { ComplaintHeader } from "@/components/complaints/detail/complaint-header";
-import { ComplaintDescription, ComplaintFacts } from "@/components/complaints/detail/complaint-info";
+import { ComplaintDescription, ComplaintFacts, ComplaintMap } from "@/components/complaints/detail/complaint-info";
 import { ComplaintTimeline } from "@/components/complaints/detail/complaint-timeline";
 import { PaymentPanel } from "@/components/complaints/detail/payment-panel";
 import { PersonCard } from "@/components/complaints/detail/person-card";
@@ -54,6 +54,7 @@ export function AdminComplaintDetail({ id }: { id: string }) {
               </CardContent>
             </Card>
           )}
+          <ComplaintMap complaint={complaint} />
           <ComplaintFacts complaint={complaint} />
         </div>
       </div>
