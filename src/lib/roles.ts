@@ -27,12 +27,26 @@ export const getAreaRole = (pathname: string) => ROLE_AREAS.find((area) => match
 
 export const isGuestOnlyPath = (pathname: string) => GUEST_ONLY_PATHS.some((path) => matches(pathname, path));
 
+const LOCAL_ORIGIN = "https://citycare.invalid";
+
+const toLocalPath = (value: string) => {
+  try {
+    const url = new URL(value, LOCAL_ORIGIN);
+
+    return url.origin === LOCAL_ORIGIN ? `${url.pathname}${url.search}${url.hash}` : null;
+  } catch {
+    return null;
+  }
+};
+
 export const getSafeRedirect = (value: string | null | undefined, role: Role) => {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+  const path = value?.startsWith("/") ? toLocalPath(value) : null;
+
+  if (!path) {
     return ROLE_HOME[role];
   }
 
-  const area = getAreaRole(value.split("?")[0] ?? value);
+  const area = getAreaRole(path.split(/[?#]/)[0] ?? path);
 
-  return area && area !== role ? ROLE_HOME[role] : value;
+  return area && area !== role ? ROLE_HOME[role] : path;
 };
