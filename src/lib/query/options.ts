@@ -6,26 +6,49 @@ import type {
   CategoryFilters,
   ComplaintFilters,
   MessageFilters,
+  NotificationFilters,
   PaymentFilters,
   UserFilters,
   WorkloadFilters,
 } from "@/lib/filters";
 import type {
   AdminStats,
+  AppNotification,
   AuditLog,
   Category,
   CitizenStats,
+  ComplaintComment,
   ComplaintDetail,
   ComplaintListItem,
   ContactMessage,
   Department,
+  MapComplaint,
+  NearbyReport,
   Payment,
+  PublicReport,
   PublicStats,
   StaffStats,
   StaffWorkload,
   TrackedComplaint,
+  UnreadCount,
   User,
 } from "@/types";
+
+export interface PublicReportFilters {
+  status?: "OPEN" | "RESOLVED" | "ALL";
+  categoryId?: string;
+}
+
+export interface NearbyParams {
+  latitude: number;
+  longitude: number;
+  categoryId?: string;
+}
+
+export interface MapFilters {
+  status?: "ALL";
+  departmentId?: string;
+}
 
 export const PAGE_SIZE = 10;
 
@@ -51,6 +74,14 @@ export const queryKeys = {
   messages: ["messages"] as const,
   messageList: (filters: MessageFilters) => ["messages", "list", filters] as const,
   newMessageCount: ["messages", "new-count"] as const,
+  notifications: ["notifications"] as const,
+  notificationList: (filters: NotificationFilters) => ["notifications", "list", filters] as const,
+  latestNotifications: ["notifications", "latest"] as const,
+  unreadCount: ["notifications", "unread-count"] as const,
+  comments: (id: string) => ["complaints", "detail", id, "comments"] as const,
+  publicReports: (filters: PublicReportFilters) => ["public-reports", filters] as const,
+  nearby: (params: NearbyParams) => ["public-reports", "nearby", params] as const,
+  complaintMap: (filters: MapFilters) => ["complaints", "map", filters] as const,
 };
 
 export const sessionQuery = () =>
@@ -82,6 +113,55 @@ export const complaintQueries = {
       queryKey: queryKeys.tracking(code),
       queryFn: () => fetcher.get<TrackedComplaint>(`/complaints/track/${encodeURIComponent(code)}`),
       retry: false,
+    }),
+  comments: (id: string) =>
+    queryOptions({
+      queryKey: queryKeys.comments(id),
+      queryFn: () => clientFetcher.get<ComplaintComment[]>(`/complaints/${id}/comments`),
+      refetchInterval: 30 * 1000,
+    }),
+  map: (filters: MapFilters) =>
+    queryOptions({
+      queryKey: queryKeys.complaintMap(filters),
+      queryFn: () => clientFetcher.get<MapComplaint[]>("/complaints/map", { ...filters }),
+      placeholderData: keepPreviousData,
+    }),
+};
+
+export const communityQueries = {
+  publicReports: (filters: PublicReportFilters) =>
+    queryOptions({
+      queryKey: queryKeys.publicReports(filters),
+      queryFn: () => clientFetcher.get<PublicReport[]>("/complaints/public", { ...filters }),
+      staleTime: 60 * 1000,
+      placeholderData: keepPreviousData,
+    }),
+  nearby: (params: NearbyParams) =>
+    queryOptions({
+      queryKey: queryKeys.nearby(params),
+      queryFn: () => clientFetcher.get<NearbyReport[]>("/complaints/nearby", { ...params, radius: 300 }),
+      staleTime: 30 * 1000,
+    }),
+};
+
+export const notificationQueries = {
+  list: (filters: NotificationFilters, fetcher: Fetcher = clientFetcher) =>
+    queryOptions({
+      queryKey: queryKeys.notificationList(filters),
+      queryFn: () => fetcher.list<AppNotification>("/notifications", { ...filters, limit: PAGE_SIZE }),
+      placeholderData: keepPreviousData,
+    }),
+  latest: () =>
+    queryOptions({
+      queryKey: queryKeys.latestNotifications,
+      queryFn: () => clientFetcher.list<AppNotification>("/notifications", { limit: 8 }),
+    }),
+  unreadCount: () =>
+    queryOptions({
+      queryKey: queryKeys.unreadCount,
+      queryFn: async () => (await clientFetcher.get<UnreadCount>("/notifications/unread-count")).count,
+      refetchInterval: 30 * 1000,
+      refetchOnWindowFocus: true,
     }),
 };
 

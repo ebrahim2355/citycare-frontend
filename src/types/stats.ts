@@ -42,6 +42,7 @@ export interface AdminStats {
     open: number;
     unassigned: number;
     overdue: number;
+    escalated: number;
     createdLast7Days: number;
   };
   payments: { completed: number; pending: number; refunded: number; revenue: number; refundedAmount: number };

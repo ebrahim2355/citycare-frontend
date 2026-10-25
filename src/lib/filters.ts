@@ -95,6 +95,11 @@ export const workloadFilterSchema = z.object({
   departmentId: id,
 });
 
+export const notificationFilterSchema = z.object({
+  page,
+  unread: flag,
+});
+
 export type ComplaintFilters = z.infer<typeof complaintFilterSchema>;
 export type PaymentFilters = z.infer<typeof paymentFilterSchema>;
 export type UserFilters = z.infer<typeof userFilterSchema>;
@@ -102,6 +107,7 @@ export type AuditFilters = z.infer<typeof auditFilterSchema>;
 export type MessageFilters = z.infer<typeof messageFilterSchema>;
 export type CategoryFilters = z.infer<typeof categoryFilterSchema>;
 export type WorkloadFilters = z.infer<typeof workloadFilterSchema>;
+export type NotificationFilters = z.infer<typeof notificationFilterSchema>;
 
 const toRecord = (input: SearchInput) => {
   if (input instanceof URLSearchParams) {

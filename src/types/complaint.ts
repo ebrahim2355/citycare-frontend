@@ -36,6 +36,9 @@ export interface ComplaintListItem {
   submittedAt: string | null;
   resolvedAt: string | null;
   createdAt: string;
+  escalatedAt: string | null;
+  isPublic: boolean;
+  supportCount: number;
   isOverdue: boolean;
   category: NamedRef;
   department: NamedRef;
@@ -94,6 +97,9 @@ export interface ComplaintDetail {
   resolutionNote: string | null;
   rejectionReason: string | null;
   reopenCount: number;
+  escalatedAt: string | null;
+  isPublic: boolean;
+  supportCount: number;
   createdAt: string;
   updatedAt: string;
   isOverdue: boolean;
@@ -108,6 +114,7 @@ export interface ComplaintDetail {
 }
 
 export interface TrackedComplaint {
+  id: string | null;
   trackingCode: string;
   title: string;
   type: CategoryType;
@@ -120,7 +127,68 @@ export interface TrackedComplaint {
   closedAt: string | null;
   createdAt: string;
   isOverdue: boolean;
+  isPublic: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  supportCount: number;
   category: { name: string };
   department: { name: string };
   updates: { fromStatus: ComplaintStatus | null; toStatus: ComplaintStatus; createdAt: string }[];
+}
+
+export interface PublicReport {
+  id: string;
+  trackingCode: string;
+  title: string;
+  status: ComplaintStatus;
+  priority: Priority;
+  area: string;
+  latitude: number;
+  longitude: number;
+  createdAt: string;
+  resolvedAt: string | null;
+  isOverdue: boolean;
+  supportCount: number;
+  category: NamedRef;
+  department: NamedRef;
+}
+
+export interface NearbyReport extends PublicReport {
+  distanceMeters: number;
+  isMine: boolean;
+  supportedByMe: boolean;
+}
+
+export interface MapComplaint {
+  id: string;
+  trackingCode: string;
+  title: string;
+  type: CategoryType;
+  status: ComplaintStatus;
+  priority: Priority;
+  area: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  dueAt: string | null;
+  escalatedAt: string | null;
+  createdAt: string;
+  isOverdue: boolean;
+  supportCount: number;
+  category: NamedRef;
+  department: NamedRef;
+  assignedStaff: NamedRef | null;
+}
+
+export interface SupportResult {
+  supportCount: number;
+  supported: boolean;
+}
+
+export interface ComplaintComment {
+  id: string;
+  body: string;
+  isInternal: boolean;
+  createdAt: string;
+  author: { id: string; name: string; role: Role; avatarUrl: string | null } | null;
 }
