@@ -14,8 +14,8 @@ export default defineConfig({
     restoreMocks: true,
     coverage: {
       provider: "v8",
-      include: ["src/lib/**", "src/components/**", "src/hooks/**"],
-      exclude: ["src/components/ui/**", "src/lib/server/**"],
+      include: ["src/lib/**", "src/hooks/**", "src/components/shared/**"],
+      exclude: ["src/lib/server/**"],
       reporter: ["text-summary", "html"],
     },
   },
