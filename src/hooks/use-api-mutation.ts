@@ -34,9 +34,9 @@ export function useApiMutation<TData = unknown, TVariables = void, TContext = un
     },
     onError: (error, variables, context, mutation) => {
       if (!silentError) {
-        const { title, description } = getErrorText(error);
+        const { title, description, reference } = getErrorText(error);
 
-        toast.error(title, { description });
+        toast.error(title, { description: reference ? `${description ?? ""} Reference ${reference}`.trim() : description });
       }
 
       return onError?.(error, variables, context, mutation);

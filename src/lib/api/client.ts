@@ -64,7 +64,9 @@ export const uploadFiles = <T>(path: string, form: FormData, onProgress?: (perce
         const envelope = body as ApiResponse<T> | null;
 
         if (!envelope || !envelope.success || xhr.status >= 400) {
-          reject(new ApiError(envelope?.message || "Upload failed", xhr.status, envelope?.errors ?? []));
+          reject(
+            new ApiError(envelope?.message || "Upload failed", xhr.status, envelope?.errors ?? [], xhr.getResponseHeader("x-request-id") ?? undefined)
+          );
           return;
         }
 

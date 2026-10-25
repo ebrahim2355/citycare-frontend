@@ -18,12 +18,14 @@ interface BackendOptions {
   token?: string | null;
   search?: string;
   client?: ClientInfo;
+  requestId?: string;
 }
 
 export interface BackendResult<T = unknown> {
   status: number;
   body: ApiResponse<T>;
   headers: Headers;
+  requestId: string;
 }
 
 export const getClientInfo = (headers: Headers): ClientInfo => ({
@@ -31,15 +33,16 @@ export const getClientInfo = (headers: Headers): ClientInfo => ({
   userAgent: headers.get("user-agent"),
 });
 
-const unreachable = (status: number, message: string, detail: string): BackendResult<null> => ({
+const unreachable = (requestId: string, status: number, message: string, detail: string): BackendResult<null> => ({
   status,
   body: { success: false, message, data: null, errors: [{ message: detail }] },
   headers: new Headers(),
+  requestId,
 });
 
 export const callBackend = async <T = unknown>(path: string, options: BackendOptions = {}): Promise<BackendResult<T>> => {
-  const { method = "GET", json, body, contentType, token, search = "", client } = options;
-  const headers = new Headers({ Accept: "application/json" });
+  const { method = "GET", json, body, contentType, token, search = "", client, requestId = crypto.randomUUID() } = options;
+  const headers = new Headers({ Accept: "application/json", "X-Request-Id": requestId });
 
   if (json !== undefined) {
     headers.set("Content-Type", "application/json");
@@ -75,6 +78,7 @@ export const callBackend = async <T = unknown>(path: string, options: BackendOpt
     const timedOut = error instanceof DOMException && error.name === "TimeoutError";
 
     return unreachable(
+      requestId,
       timedOut ? 504 : 503,
       timedOut ? "The CityCare API took too long to answer" : "The CityCare API is not reachable",
       "Please try again in a moment."
@@ -84,8 +88,8 @@ export const callBackend = async <T = unknown>(path: string, options: BackendOpt
   const parsed = (await response.json().catch(() => null)) as ApiResponse<T> | null;
 
   if (!parsed || typeof parsed.success !== "boolean") {
-    return unreachable(502, "Unexpected response from the CityCare API", "Please try again in a moment.") as BackendResult<T>;
+    return unreachable(requestId, 502, "Unexpected response from the CityCare API", "Please try again in a moment.") as BackendResult<T>;
   }
 
-  return { status: response.status, body: parsed, headers: response.headers };
+  return { status: response.status, body: parsed, headers: response.headers, requestId: response.headers.get("x-request-id") ?? requestId };
 };

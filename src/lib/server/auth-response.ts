@@ -9,7 +9,10 @@ export type SessionPayload = TokenPair & { user: User };
 
 export const sessionResponse = (result: BackendResult<SessionPayload>, redirect?: string | null) => {
   if (result.status >= 400 || !result.body.success || !result.body.data?.accessToken) {
-    return NextResponse.json(result.body, { status: result.status >= 400 ? result.status : 502 });
+    return NextResponse.json(result.body, {
+      status: result.status >= 400 ? result.status : 502,
+      headers: { "X-Request-Id": result.requestId },
+    });
   }
 
   const { user, accessToken, refreshToken } = result.body.data;
@@ -19,7 +22,7 @@ export const sessionResponse = (result: BackendResult<SessionPayload>, redirect?
       message: result.body.message,
       data: { user, redirectTo: getSafeRedirect(redirect, user.role) },
     },
-    { status: result.status }
+    { status: result.status, headers: { "X-Request-Id": result.requestId } }
   );
 
   setAuthCookies(response.cookies, { accessToken, refreshToken });

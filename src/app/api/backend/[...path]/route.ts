@@ -43,6 +43,7 @@ const forward = async (request: NextRequest, context: RouteContext<"/api/backend
   const cacheStatus = result.headers.get("x-cache");
 
   response.headers.set("Cache-Control", "no-store");
+  response.headers.set("X-Request-Id", result.requestId);
 
   if (cacheStatus) {
     response.headers.set("X-Cache", cacheStatus);

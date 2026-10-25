@@ -13,7 +13,7 @@ interface ErrorStateProps {
 }
 
 export function ErrorState({ error, onRetry, retrying, className }: ErrorStateProps) {
-  const { title, description } = getErrorText(error);
+  const { title, description, reference } = getErrorText(error);
 
   return (
     <div
@@ -29,6 +29,7 @@ export function ErrorState({ error, onRetry, retrying, className }: ErrorStatePr
       <div className="space-y-1">
         <p className="font-semibold">{title}</p>
         {description && <p className="max-w-md text-sm text-muted-foreground">{description}</p>}
+        {reference && <p className="font-mono text-xs text-muted-foreground">Reference {reference}</p>}
       </div>
       {onRetry && (
         <Button variant="outline" onClick={onRetry} disabled={retrying}>

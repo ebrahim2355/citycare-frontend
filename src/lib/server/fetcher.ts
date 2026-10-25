@@ -13,7 +13,7 @@ const requestBackend = async <T>(path: string, params?: QueryParams) => {
     client: getClientInfo(incoming),
   });
 
-  return readEnvelope<T>(result.status, result.body);
+  return readEnvelope<T>(result.status, result.body, result.requestId);
 };
 
 export const serverFetcher: Fetcher = {

@@ -20,17 +20,20 @@ export const buildQuery = (params?: QueryParams) => {
   return query ? `?${query}` : "";
 };
 
-export const readEnvelope = <T>(status: number, body: unknown): ApiResponse<T> => {
+export const readEnvelope = <T>(status: number, body: unknown, requestId?: string): ApiResponse<T> => {
   const envelope = body as Partial<ApiResponse<T>> | null;
 
   if (!envelope || typeof envelope.success !== "boolean") {
-    throw new ApiError("Unexpected response from the server", status || 502, [
-      { message: "The CityCare API sent a response that could not be read. Please try again." },
-    ]);
+    throw new ApiError(
+      "Unexpected response from the server",
+      status || 502,
+      [{ message: "The CityCare API sent a response that could not be read. Please try again." }],
+      requestId
+    );
   }
 
   if (!envelope.success || status >= 400) {
-    throw new ApiError(envelope.message || "Request failed", status, envelope.errors ?? []);
+    throw new ApiError(envelope.message || "Request failed", status, envelope.errors ?? [], requestId);
   }
 
   return envelope as ApiResponse<T>;
@@ -39,7 +42,7 @@ export const readEnvelope = <T>(status: number, body: unknown): ApiResponse<T> =
 export const parseResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
   const body = await response.json().catch(() => null);
 
-  return readEnvelope<T>(response.status, body);
+  return readEnvelope<T>(response.status, body, response.headers.get("x-request-id") ?? undefined);
 };
 
 export const toPaginated = <T>(envelope: ApiResponse<T[]>): Paginated<T> => {
