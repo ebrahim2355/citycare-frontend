@@ -1,0 +1,21 @@
+name: citycare-web
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    environment:
+      API_URL: ${API_URL:-http://api:5000/api/v1}
+      JWT_ACCESS_SECRET: ${DOCKER_JWT_SECRET:-local-docker-secret-change-me-0123456789abcdef}
+      INTERNAL_API_KEY: ${DOCKER_INTERNAL_API_KEY:-local-docker-internal-key}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    restart: unless-stopped
+
+networks:
+  default:
+    name: citycare
+    external: true
