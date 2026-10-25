@@ -3,6 +3,7 @@
 import { Pencil, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo } from "react";
+import { LazyLocationPreview } from "@/components/map/lazy";
 import { PriorityBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatMoney, formatSla } from "@/lib/format";
@@ -68,9 +69,7 @@ export function StepReview({ values, category, photos, onEdit }: StepReviewProps
           {values.address}, {values.area}
         </p>
         {values.latitude !== undefined && values.longitude !== undefined && (
-          <p className="text-sm text-muted-foreground">
-            Exact location: {values.latitude.toFixed(4)}, {values.longitude.toFixed(4)}
-          </p>
+          <LazyLocationPreview latitude={values.latitude} longitude={values.longitude} label="Map of the pinned spot" className="h-40" />
         )}
       </Section>
       <Section title="Photos" step="photos" onEdit={onEdit}>

@@ -427,3 +427,66 @@
     animation: none !important;
   }
 }
+
+.leaflet-container {
+  font-family: inherit;
+  background: var(--muted);
+}
+
+.leaflet-tile-pane {
+  filter: saturate(0.7) contrast(0.96);
+}
+
+.dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.86) saturate(0.45);
+}
+
+.leaflet-container a {
+  color: var(--primary);
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.leaflet-control-attribution.leaflet-control {
+  background: color-mix(in oklch, var(--card) 85%, transparent);
+  color: var(--muted-foreground);
+  font-size: 10px;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 10px 30px -12px oklch(0 0 0 / 35%);
+}
+
+.leaflet-popup-content-wrapper {
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 2px);
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: var(--muted-foreground);
+}
+
+.citycare-pin {
+  background: none;
+  border: none;
+  filter: drop-shadow(0 4px 6px oklch(0 0 0 / 30%));
+}
+
+.citycare-dot {
+  background: none;
+  border: none;
+}
