@@ -5,8 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Building2, CalendarClock, MapPin, SearchX, Tag } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SupportButton } from "@/components/community/support-button";
 import { ProgressSteps } from "@/components/complaints/progress-steps";
 import { TextField } from "@/components/forms/form-fields";
+import { LazyLocationPreview } from "@/components/map/lazy";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { RelativeTime } from "@/components/shared/relative-time";
@@ -16,8 +18,8 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUrlFilters } from "@/hooks/use-url-filters";
 import { isApiError } from "@/lib/api/errors";
-import { STATUS_META } from "@/lib/complaint-meta";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { OPEN_STATUSES, STATUS_META } from "@/lib/complaint-meta";
+import { formatDate, formatDateTime, pluralize } from "@/lib/format";
 import { complaintQueries } from "@/lib/query/options";
 import { trackSchema, type TrackValues } from "@/lib/validations";
 
@@ -77,6 +79,21 @@ function TrackResult({ code }: { code: string }) {
           </div>
         ))}
       </dl>
+      {data.isPublic && data.id && data.latitude !== null && data.longitude !== null && (
+        <div className="space-y-3">
+          <LazyLocationPreview latitude={data.latitude} longitude={data.longitude} label={`Map of the report in ${data.area}`} className="h-48" />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">
+              {data.supportCount
+                ? `${pluralize(data.supportCount, "neighbour")} ${data.supportCount === 1 ? "says" : "say"} this affects them too.`
+                : "Nobody else has said this affects them yet."}
+            </p>
+            {OPEN_STATUSES.includes(data.status) && (
+              <SupportButton complaintId={data.id} supportCount={data.supportCount} redirect={`/track?code=${data.trackingCode}`} />
+            )}
+          </div>
+        </div>
+      )}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold">History</h3>
         <ol className="space-y-3 border-l pl-5">
