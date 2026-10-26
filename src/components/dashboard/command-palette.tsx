@@ -11,9 +11,11 @@ import {
   ListChecks,
   LogOut,
   type LucideIcon,
+  MapPinned,
   Moon,
   Search,
   SearchCheck,
+  Siren,
   Sun,
   UserX,
 } from "lucide-react";
@@ -50,6 +52,7 @@ const ROLE_ACTIONS: Record<Role, PaletteAction[]> = {
   CITIZEN: [
     { id: "new-report", label: "Report a new problem", icon: FilePlus2, href: "/dashboard/complaints/new" },
     { id: "pay", label: "Requests waiting for payment", icon: CircleDollarSign, href: "/dashboard/complaints?status=PENDING_PAYMENT" },
+    { id: "city-map", label: "City issue map", icon: MapPinned, href: "/map" },
   ],
   STAFF: [
     { id: "waiting", label: "Jobs waiting to start", icon: ListChecks, href: "/staff/tasks?status=ASSIGNED" },
@@ -58,6 +61,7 @@ const ROLE_ACTIONS: Record<Role, PaletteAction[]> = {
   ADMIN: [
     { id: "unassigned", label: "Reports with nobody assigned", icon: UserX, href: "/admin/complaints?status=SUBMITTED&unassigned=true" },
     { id: "overdue", label: "Overdue reports", icon: AlarmClock, href: "/admin/complaints?overdue=true" },
+    { id: "escalated", label: "Escalated reports", icon: Siren, href: "/admin/complaints?escalated=true" },
     { id: "messages", label: "New contact messages", icon: Inbox, href: "/admin/messages?status=NEW" },
   ],
 };
