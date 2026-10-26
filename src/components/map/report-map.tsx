@@ -30,64 +30,68 @@ interface ReportMapProps {
   className?: string;
 }
 
-function FitToPoints({ pointsRef, pointsKey }: { pointsRef: RefObject<MapPoint[]>; pointsKey: string }) {
+const toBoundsKey = (points: MapPoint[]) => points.map((point) => `${point.latitude},${point.longitude}`).join(";");
+
+const fromBoundsKey = (key: string) =>
+  key.split(";").map((pair): LatLngTuple => {
+    const [latitude = 0, longitude = 0] = pair.split(",").map(Number);
+
+    return [latitude, longitude];
+  });
+
+function FitToPoints({ boundsKey }: { boundsKey: string }) {
   const map = useMap();
   const fitted = useRef(false);
 
   useEffect(() => {
-    if (!pointsKey) {
+    const size = map.getSize();
+
+    if (!boundsKey || !size.x || !size.y) {
       return;
     }
 
-    const bounds = pointsRef.current.map((point): LatLngTuple => [point.latitude, point.longitude]);
-
-    map.fitBounds(bounds, { padding: [48, 48], maxZoom: 15, animate: fitted.current });
+    map.fitBounds(fromBoundsKey(boundsKey), { padding: [48, 48], maxZoom: 15, animate: fitted.current });
     fitted.current = true;
-  }, [map, pointsKey, pointsRef]);
+  }, [map, boundsKey]);
 
   return null;
 }
 
-function FlyToFocus({
-  pointsRef,
-  markersRef,
-  focus,
-}: {
-  pointsRef: RefObject<MapPoint[]>;
-  markersRef: RefObject<Map<string, LeafletCircleMarker>>;
-  focus?: MapFocus | null;
-}) {
+interface FocusTarget {
+  id: string;
+  latitude: number;
+  longitude: number;
+  nonce: number;
+}
+
+function FlyToFocus({ target, markersRef }: { target: FocusTarget | null; markersRef: RefObject<Map<string, LeafletCircleMarker>> }) {
   const map = useMap();
-  const focusId = focus?.id;
-  const nonce = focus?.nonce;
+  const id = target?.id;
+  const latitude = target?.latitude;
+  const longitude = target?.longitude;
+  const nonce = target?.nonce;
 
   useEffect(() => {
-    const point = pointsRef.current.find((item) => item.id === focusId);
-
-    if (!point || nonce === undefined) {
+    if (id === undefined || latitude === undefined || longitude === undefined || nonce === undefined) {
       return;
     }
 
-    map.flyTo([point.latitude, point.longitude], Math.max(map.getZoom(), 16), { duration: 0.7 });
-    map.once("moveend", () => markersRef.current.get(point.id)?.openPopup());
-  }, [map, focusId, nonce, pointsRef, markersRef]);
+    map.flyTo([latitude, longitude], Math.max(map.getZoom(), 16), { duration: 0.7 });
+    map.once("moveend", () => markersRef.current.get(id)?.openPopup());
+  }, [map, id, latitude, longitude, nonce, markersRef]);
 
   return null;
 }
 
 export default function ReportMap({ points, label, focus, renderPopup, className }: ReportMapProps) {
   const markersRef = useRef(new Map<string, LeafletCircleMarker>());
-  const pointsRef = useRef(points);
-  const pointsKey = points.map((point) => point.id).join(",");
-
-  useEffect(() => {
-    pointsRef.current = points;
-  });
+  const focused = focus ? points.find((point) => point.id === focus.id) : undefined;
+  const target = focus && focused ? { id: focused.id, latitude: focused.latitude, longitude: focused.longitude, nonce: focus.nonce } : null;
 
   return (
     <CityMap center={DHAKA_CENTER} zoom={12} label={label} className={className} scrollWheelZoom>
-      <FitToPoints pointsRef={pointsRef} pointsKey={pointsKey} />
-      <FlyToFocus pointsRef={pointsRef} markersRef={markersRef} focus={focus} />
+      <FitToPoints boundsKey={toBoundsKey(points)} />
+      <FlyToFocus target={target} markersRef={markersRef} />
       {points.map((point) => (
         <CircleMarker
           key={point.id}
