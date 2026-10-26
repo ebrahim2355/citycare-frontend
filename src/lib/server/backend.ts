@@ -4,6 +4,7 @@ export const API_URL = (process.env.API_URL || "http://localhost:5000/api/v1").r
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY || "";
 const TIMEOUT_MS = 20000;
+const DOWNLOAD_TIMEOUT_MS = 60000;
 
 export interface ClientInfo {
   ip?: string | null;
@@ -40,18 +41,11 @@ const unreachable = (requestId: string, status: number, message: string, detail:
   requestId,
 });
 
-export const callBackend = async <T = unknown>(path: string, options: BackendOptions = {}): Promise<BackendResult<T>> => {
-  const { method = "GET", json, body, contentType, token, search = "", client, requestId } = options;
-  const headers = new Headers({ Accept: "application/json" });
+const backendHeaders = ({ token, client, requestId, accept }: { token?: string | null; client?: ClientInfo; requestId?: string; accept: string }) => {
+  const headers = new Headers({ Accept: accept });
 
   if (requestId) {
     headers.set("X-Request-Id", requestId);
-  }
-
-  if (json !== undefined) {
-    headers.set("Content-Type", "application/json");
-  } else if (contentType) {
-    headers.set("Content-Type", contentType);
   }
 
   if (token) {
@@ -65,6 +59,27 @@ export const callBackend = async <T = unknown>(path: string, options: BackendOpt
     if (client.userAgent) {
       headers.set("X-Client-User-Agent", client.userAgent.slice(0, 250));
     }
+  }
+
+  return headers;
+};
+
+export const openBackendDownload = (path: string, { token, search = "", client, requestId }: BackendOptions = {}) => {
+  return fetch(`${API_URL}${path}${search}`, {
+    headers: backendHeaders({ token, client, requestId, accept: "text/csv, application/json" }),
+    cache: "no-store",
+    signal: AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
+  });
+};
+
+export const callBackend = async <T = unknown>(path: string, options: BackendOptions = {}): Promise<BackendResult<T>> => {
+  const { method = "GET", json, body, contentType, token, search = "", client, requestId } = options;
+  const headers = backendHeaders({ token, client, requestId, accept: "application/json" });
+
+  if (json !== undefined) {
+    headers.set("Content-Type", "application/json");
+  } else if (contentType) {
+    headers.set("Content-Type", contentType);
   }
 
   let response: Response;
