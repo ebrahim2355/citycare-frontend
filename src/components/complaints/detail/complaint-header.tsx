@@ -2,7 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { RelativeTime } from "@/components/shared/relative-time";
-import { FeeStatusBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
+import { EscalatedBadge, FeeStatusBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
+import { OPEN_STATUSES } from "@/lib/complaint-meta";
 import { TrackingCode } from "@/components/shared/tracking-code";
 import { Button } from "@/components/ui/button";
 import type { ComplaintDetail } from "@/types";
@@ -35,6 +36,7 @@ export function ComplaintHeader({ complaint, backHref, backLabel, actions }: Com
             <PriorityBadge priority={complaint.priority} />
             {complaint.type === "SERVICE" && <FeeStatusBadge status={complaint.paymentStatus} />}
             {complaint.isOverdue && <OverdueBadge />}
+            {complaint.escalatedAt && OPEN_STATUSES.includes(complaint.status) && <EscalatedBadge />}
           </div>
         </div>
         {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}

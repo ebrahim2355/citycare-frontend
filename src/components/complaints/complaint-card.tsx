@@ -1,7 +1,7 @@
 import { CalendarClock, ChevronRight, MapPin, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { RelativeTime } from "@/components/shared/relative-time";
-import { FeeStatusBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
+import { EscalatedBadge, FeeStatusBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
 import { OPEN_STATUSES } from "@/lib/complaint-meta";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -35,6 +35,7 @@ export function ComplaintCard({ complaint, href, showCitizen = false, className 
         <PriorityBadge priority={complaint.priority} />
         {complaint.type === "SERVICE" && <FeeStatusBadge status={complaint.paymentStatus} />}
         {complaint.isOverdue && <OverdueBadge />}
+        {complaint.escalatedAt && complaint.isOverdue && <EscalatedBadge />}
       </div>
       <div className="grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
         <span className="flex items-center gap-1.5">

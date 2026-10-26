@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { AlarmClock, FilterX, Inbox, SearchX, UserX } from "lucide-react";
+import { AlarmClock, FilterX, Inbox, SearchX, Siren, UserX } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ComplaintCard } from "@/components/complaints/complaint-card";
@@ -12,7 +12,7 @@ import { FilterSelect } from "@/components/shared/filter-select";
 import { PaginationBar } from "@/components/shared/pagination-bar";
 import { RelativeTime } from "@/components/shared/relative-time";
 import { SearchInput } from "@/components/shared/search-input";
-import { OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
+import { EscalatedBadge, OverdueBadge, PriorityBadge, StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { useUrlFilters } from "@/hooks/use-url-filters";
@@ -50,7 +50,7 @@ function DueCell({ complaint }: { complaint: ComplaintListItem }) {
   return (
     <div className="space-y-1">
       <p className={cn("text-sm", complaint.isOverdue && "font-medium text-destructive")}>{formatDateTime(complaint.dueAt)}</p>
-      {complaint.isOverdue && <OverdueBadge />}
+      {complaint.escalatedAt ? <EscalatedBadge /> : complaint.isOverdue && <OverdueBadge />}
     </div>
   );
 }
@@ -195,6 +195,18 @@ export function ComplaintBrowser({ variant, basePath, emptyAction, rowActions }:
             >
               <AlarmClock />
               Overdue
+            </Toggle>
+          )}
+          {variant === "admin" && (
+            <Toggle
+              variant="outline"
+              pressed={filters.escalated === "true"}
+              onPressedChange={(pressed) => setFilters({ escalated: pressed ? "true" : undefined })}
+              aria-label="Show only escalated reports"
+              className="bg-card data-[state=on]:border-amber-400/50 data-[state=on]:bg-amber-500/10 data-[state=on]:text-amber-800 dark:data-[state=on]:text-amber-200"
+            >
+              <Siren />
+              Escalated
             </Toggle>
           )}
           {variant === "admin" && (

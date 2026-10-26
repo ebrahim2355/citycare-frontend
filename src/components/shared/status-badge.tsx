@@ -1,4 +1,4 @@
-import { AlarmClock } from "lucide-react";
+import { AlarmClock, Siren } from "lucide-react";
 import { FEE_STATUS_META, PAYMENT_STATUS_META, PRIORITY_META, STATUS_META } from "@/lib/complaint-meta";
 import { cn } from "@/lib/utils";
 import type { ComplaintPaymentStatus, ComplaintStatus, PaymentStatus, Priority } from "@/types";
@@ -83,6 +83,22 @@ export function OverdueBadge({ className }: { className?: string }) {
     >
       <AlarmClock className="size-3.5" aria-hidden />
       Overdue
+    </span>
+  );
+}
+
+export function EscalatedBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        pill,
+        "border-amber-300/80 bg-amber-50 text-amber-800 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-200",
+        className
+      )}
+      title="Missed its deadline and was raised to the city team"
+    >
+      <Siren className="size-3.5" aria-hidden />
+      Escalated
     </span>
   );
 }

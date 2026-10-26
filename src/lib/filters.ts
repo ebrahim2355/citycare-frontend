@@ -49,6 +49,7 @@ export const complaintFilterSchema = z.object({
   assignedStaffId: id,
   unassigned: flag,
   overdue: flag,
+  escalated: flag,
   sortBy: optionalEnum(["createdAt", "updatedAt", "dueAt", "priority", "status"]),
   sortOrder,
 });

@@ -8,9 +8,10 @@ import {
   FolderOpen,
   Inbox,
   RefreshCw,
+  Siren,
   Star,
-  UserX,
   Users,
+  UserX,
 } from "lucide-react";
 import Link from "next/link";
 import { LazyDepartmentBars, LazyStatusDonut, LazyTrendArea } from "@/components/charts/lazy";
@@ -22,13 +23,16 @@ import { StatCard, StatCardSkeleton } from "@/components/shared/stat-card";
 import { PriorityBadge } from "@/components/shared/status-badge";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { api } from "@/lib/api/client";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PRIORITY_META } from "@/lib/complaint-meta";
 import { PRIORITIES } from "@/lib/filters";
-import { formatDateTime, formatHours, formatMoney, formatNumber } from "@/lib/format";
-import { adminQueries, complaintQueries, statsQueries } from "@/lib/query/options";
+import { formatDateTime, formatHours, formatMoney, formatNumber, pluralize } from "@/lib/format";
+import { adminQueries, complaintQueries, queryKeys, statsQueries } from "@/lib/query/options";
 import { UNASSIGNED_QUEUE } from "@/lib/queues";
 import { cn } from "@/lib/utils";
 
@@ -126,6 +130,22 @@ function WorkloadPreview() {
   );
 }
 
+function DeadlineCheckButton() {
+  const check = useApiMutation({
+    mutationFn: async () => (await api.post<{ checked: number; escalated: number }>("/admin/sla-check")).data,
+    successMessage: (result) =>
+      result.escalated ? `${pluralize(result.escalated, "overdue report")} escalated` : "No new overdue reports. Everything is on track or already escalated.",
+    invalidate: [queryKeys.stats, queryKeys.complaints, queryKeys.notifications],
+  });
+
+  return (
+    <Button variant="outline" size="lg" className={bannerOutlineButton} onClick={() => check.mutate()} disabled={check.isPending}>
+      {check.isPending ? <Spinner /> : <Siren data-icon="inline-start" />}
+      Check deadlines
+    </Button>
+  );
+}
+
 export function AdminOverview() {
   const stats = useQuery(statsQueries.admin());
   const data = stats.data;
@@ -136,10 +156,13 @@ export function AdminOverview() {
         title="City overview"
         description={data ? `Live numbers, refreshed ${formatDateTime(data.generatedAt)}.` : "Live numbers from every department."}
         actions={
-          <Button variant="outline" size="lg" className={bannerOutlineButton} onClick={() => stats.refetch()} disabled={stats.isFetching}>
-            <RefreshCw data-icon="inline-start" className={cn(stats.isFetching && "animate-spin")} />
-            Refresh
-          </Button>
+          <>
+            <DeadlineCheckButton />
+            <Button variant="outline" size="lg" className={bannerOutlineButton} onClick={() => stats.refetch()} disabled={stats.isFetching}>
+              <RefreshCw data-icon="inline-start" className={cn(stats.isFetching && "animate-spin")} />
+              Refresh
+            </Button>
+          </>
         }
       />
 
@@ -170,7 +193,7 @@ export function AdminOverview() {
                 value={formatNumber(data.complaints.overdue)}
                 icon={AlarmClock}
                 tone={data.complaints.overdue ? "red" : "emerald"}
-                hint="Open past their target time"
+                hint={data.complaints.escalated ? `${formatNumber(data.complaints.escalated)} escalated by the deadline check` : "Open past their target time"}
                 href="/admin/complaints?overdue=true"
               />
               <StatCard
