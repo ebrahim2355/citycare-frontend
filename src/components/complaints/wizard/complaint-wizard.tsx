@@ -25,13 +25,13 @@ import { applyServerErrors } from "@/lib/forms";
 import { formatMoney } from "@/lib/format";
 import { catalogQueries, queryKeys } from "@/lib/query/options";
 import { complaintSchema, type ComplaintValues } from "@/lib/validations";
-import { useComplaintDraft, WIZARD_STEPS, type WizardStep } from "@/stores/complaint-draft-store";
+import { EMPTY_DRAFT, useComplaintDraft, WIZARD_STEPS, type WizardStep } from "@/stores/complaint-draft-store";
 import type { CheckoutResult, ComplaintDetail } from "@/types";
 
 const STEP_FIELDS: Record<WizardStep, FieldPath<ComplaintValues>[]> = {
   category: ["categoryId"],
   details: ["title", "description", "priority"],
-  location: ["area", "address", "latitude", "longitude"],
+  location: ["area", "address", "latitude", "longitude", "isPublic"],
   photos: [],
   review: [],
 };
@@ -62,7 +62,7 @@ export function ComplaintWizard() {
 
   useEffect(() => {
     Promise.resolve(useComplaintDraft.persist.rehydrate()).then(() => {
-      form.reset(useComplaintDraft.getState().values);
+      form.reset({ ...EMPTY_DRAFT, ...useComplaintDraft.getState().values });
       setReady(true);
     });
   }, [form]);
@@ -187,7 +187,7 @@ export function ComplaintWizard() {
           <CardContent>
             {step === "category" && <StepCategory form={form} kind={kind} onKindChange={setKind} />}
             {step === "details" && <StepDetails form={form} />}
-            {step === "location" && <StepLocation form={form} />}
+            {step === "location" && <StepLocation form={form} isService={isService} />}
             {step === "photos" && (
               <PhotoPicker files={photos} onChange={setPhotos} max={MAX_IMAGES} disabled={busy} progress={progress} />
             )}

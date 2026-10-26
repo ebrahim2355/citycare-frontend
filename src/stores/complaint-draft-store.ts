@@ -16,6 +16,7 @@ export const EMPTY_DRAFT: ComplaintValues = {
   priority: "MEDIUM",
   area: "",
   address: "",
+  isPublic: true,
 };
 
 interface DraftState {

@@ -122,6 +122,7 @@ export const complaintSchema = z
     address: z.string().trim().min(5, "Address must be at least 5 characters").max(200, "Address cannot be longer than 200 characters"),
     latitude: z.number().min(-90).max(90).optional(),
     longitude: z.number().min(-180).max(180).optional(),
+    isPublic: z.boolean(),
   })
   .refine((values) => (values.latitude === undefined) === (values.longitude === undefined), {
     path: ["longitude"],

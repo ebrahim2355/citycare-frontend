@@ -49,6 +49,7 @@ describe("form schemas", () => {
       area: "Mirpur",
       address: "Road 7, Block C",
       latitude: 23.8,
+      isPublic: true,
     });
 
     expect(result.error?.issues[0]?.path).toEqual(["longitude"]);

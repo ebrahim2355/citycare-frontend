@@ -71,6 +71,13 @@ export function StepReview({ values, category, photos, onEdit }: StepReviewProps
         {values.latitude !== undefined && values.longitude !== undefined && (
           <LazyLocationPreview latitude={values.latitude} longitude={values.longitude} label="Map of the pinned spot" className="h-40" />
         )}
+        <p className="text-sm text-muted-foreground">
+          {category?.type === "SERVICE"
+            ? "Private. Home service requests are never shown on the public map."
+            : values.isPublic
+              ? "Shown on the public city map without your name or contact details."
+              : "Private. Only you and the city team can see it."}
+        </p>
       </Section>
       <Section title="Photos" step="photos" onEdit={onEdit}>
         {previews.length ? (
