@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AdminActions } from "@/components/complaints/detail/admin-actions";
 import { AttachmentGallery } from "@/components/complaints/detail/attachment-gallery";
+import { ComplaintDiscussion } from "@/components/complaints/detail/complaint-discussion";
 import { ComplaintHeader } from "@/components/complaints/detail/complaint-header";
 import { ComplaintDescription, ComplaintFacts, ComplaintMap } from "@/components/complaints/detail/complaint-info";
 import { ComplaintTimeline } from "@/components/complaints/detail/complaint-timeline";
@@ -32,6 +33,7 @@ export function AdminComplaintDetail({ id }: { id: string }) {
         <div className="min-w-0 space-y-6">
           <ComplaintDescription complaint={complaint} />
           <ComplaintTimeline complaint={complaint} />
+          <ComplaintDiscussion complaintId={complaint.id} />
           <AttachmentGallery complaint={complaint} />
         </div>
         <div className="space-y-6">

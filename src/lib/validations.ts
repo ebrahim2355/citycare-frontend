@@ -190,3 +190,10 @@ export const categorySchema = z
 
 export type DepartmentValues = z.infer<typeof departmentSchema>;
 export type CategoryValues = z.infer<typeof categorySchema>;
+
+export const commentSchema = z.object({
+  body: z.string().trim().min(2, "Write at least 2 characters").max(1000, "Keep the message under 1000 characters"),
+  internal: z.boolean(),
+});
+
+export type CommentValues = z.infer<typeof commentSchema>;

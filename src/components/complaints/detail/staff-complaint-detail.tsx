@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { AlarmClock } from "lucide-react";
 import { AttachmentGallery } from "@/components/complaints/detail/attachment-gallery";
+import { ComplaintDiscussion } from "@/components/complaints/detail/complaint-discussion";
 import { ComplaintHeader } from "@/components/complaints/detail/complaint-header";
 import { ComplaintDescription, ComplaintFacts, ComplaintMap } from "@/components/complaints/detail/complaint-info";
 import { ComplaintTimeline } from "@/components/complaints/detail/complaint-timeline";
@@ -40,6 +41,7 @@ export function StaffComplaintDetail({ id }: { id: string }) {
           <ComplaintDescription complaint={complaint} />
           <AttachmentGallery complaint={complaint} />
           <ComplaintTimeline complaint={complaint} />
+          <ComplaintDiscussion complaintId={complaint.id} />
         </div>
         <div className="space-y-6">
           <PersonCard title="Reported by" person={complaint.citizen} />
