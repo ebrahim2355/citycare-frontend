@@ -8,7 +8,9 @@ import {
   HardHat,
   MapPinned,
   Route,
+  Siren,
   Star,
+  ThumbsUp,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -17,6 +19,7 @@ import { CountUp } from "@/components/shared/count-up";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PROGRESS_STEPS, STATUS_META } from "@/lib/complaint-meta";
+import { OVERDUE_RING, STATUS_COLOR } from "@/lib/map-style";
 import { formatMoney, formatNumber, formatSla } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { Category, PublicStats } from "@/types";
@@ -386,6 +389,90 @@ export function RolesSection() {
               </ul>
             </Card>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const PREVIEW_DOTS = [
+  { x: 92, y: 74, r: 9, color: STATUS_COLOR.IN_PROGRESS },
+  { x: 168, y: 132, r: 12, color: STATUS_COLOR.SUBMITTED, overdue: true },
+  { x: 236, y: 64, r: 8, color: STATUS_COLOR.ASSIGNED },
+  { x: 306, y: 158, r: 10, color: STATUS_COLOR.RESOLVED },
+  { x: 128, y: 214, r: 8, color: STATUS_COLOR.ASSIGNED },
+  { x: 214, y: 236, r: 14, color: STATUS_COLOR.SUBMITTED },
+  { x: 342, y: 96, r: 8, color: STATUS_COLOR.SUBMITTED },
+  { x: 386, y: 222, r: 9, color: STATUS_COLOR.IN_PROGRESS, overdue: true },
+  { x: 60, y: 168, r: 7, color: STATUS_COLOR.RESOLVED },
+];
+
+function MapPreview() {
+  return (
+    <svg viewBox="0 0 440 300" role="img" aria-label="Preview of the city issue map" className="h-auto w-full">
+      <rect width="440" height="300" rx="20" className="fill-navy" />
+      <g className="stroke-white/10" strokeWidth="1">
+        {Array.from({ length: 11 }, (_, index) => (
+          <line key={`v${index}`} x1={index * 44} y1="0" x2={index * 44} y2="300" />
+        ))}
+        {Array.from({ length: 7 }, (_, index) => (
+          <line key={`h${index}`} x1="0" y1={index * 50} x2="440" y2={index * 50} />
+        ))}
+      </g>
+      <path d="M0 190 C 90 170, 150 120, 240 140 S 380 120, 440 70" className="fill-none stroke-white/25" strokeWidth="10" strokeLinecap="round" />
+      <path d="M120 0 C 130 90, 110 160, 150 300" className="fill-none stroke-white/15" strokeWidth="7" strokeLinecap="round" />
+      <path d="M300 300 C 290 220, 330 160, 320 0" className="fill-none stroke-white/15" strokeWidth="7" strokeLinecap="round" />
+      {PREVIEW_DOTS.map((dot) => (
+        <circle
+          key={`${dot.x}-${dot.y}`}
+          cx={dot.x}
+          cy={dot.y}
+          r={dot.r}
+          fill={dot.color}
+          stroke={dot.overdue ? OVERDUE_RING : "white"}
+          strokeWidth={dot.overdue ? 3.5 : 2.5}
+        />
+      ))}
+    </svg>
+  );
+}
+
+export function MapTeaser() {
+  const points = [
+    { icon: MapPinned, text: "Every public report on one map, coloured by how far the work has come" },
+    { icon: Siren, text: "A red ring shows when a report missed its deadline" },
+    { icon: ThumbsUp, text: "Tap Me too when a problem affects you, so the crew sees how many people wait for it" },
+  ];
+
+  return (
+    <section className="border-t bg-muted/40">
+      <div className="container-page grid gap-12 py-20 sm:py-28 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+        <div className="space-y-6">
+          <SectionHeading
+            eyebrow="Issue map"
+            title="See what is broken around the city"
+            description="Citizens choose to make their reports public. Names and contact details stay private, the problem does not."
+            align="start"
+          />
+          <ul className="reveal space-y-3">
+            {points.map((point) => (
+              <li key={point.text} className="flex gap-3 text-sm sm:text-base">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <point.icon className="size-4" aria-hidden />
+                </span>
+                <span className="pt-1 text-muted-foreground">{point.text}</span>
+              </li>
+            ))}
+          </ul>
+          <Button asChild size="lg" className="reveal">
+            <Link href="/map">
+              Open the issue map
+              <ArrowRight data-icon="inline-end" />
+            </Link>
+          </Button>
+        </div>
+        <div className="reveal overflow-hidden rounded-3xl border bg-card p-3 shadow-raised">
+          <MapPreview />
         </div>
       </div>
     </section>

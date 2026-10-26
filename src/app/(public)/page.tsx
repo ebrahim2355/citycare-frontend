@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
-import { CityInsights, CityNumbers, CtaBand, HowItWorks, RolesSection, ServicesPreview } from "@/components/home/home-sections";
+import { CityInsights, CityNumbers, CtaBand, HowItWorks, MapTeaser, RolesSection, ServicesPreview } from "@/components/home/home-sections";
 import { pageMetadata } from "@/lib/metadata";
 import { getCategories, getPublicStats } from "@/lib/server/public-api";
 
@@ -22,6 +22,7 @@ export default async function HomePage() {
       <HowItWorks />
       <ServicesPreview categories={categories} stats={stats} />
       <CityInsights stats={stats} />
+      <MapTeaser />
       <RolesSection />
       <CtaBand />
     </>
