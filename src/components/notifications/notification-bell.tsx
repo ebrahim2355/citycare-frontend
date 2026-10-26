@@ -63,10 +63,12 @@ export function NotificationBell({ role }: { role: Role }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative" aria-label={unread ? `Notifications, ${unread} unread` : "Notifications"}>
+        <Button variant="ghost" size="icon" className="relative" aria-label={unread ? `Notifications, ${badgeCount(unread)} unread` : "Notifications"}>
           {unread ? <BellRing /> : <Bell />}
           {Boolean(unread) && (
-            <span className="absolute -top-0.5 -right-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-background">
+            <span
+              aria-hidden
+              className="absolute -top-0.5 -right-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-background">
               {badgeCount(unread ?? 0)}
             </span>
           )}

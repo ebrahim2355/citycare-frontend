@@ -31,7 +31,7 @@ export function NotificationItem({ notification, onOpen, compact = false }: Noti
           {unread && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" aria-label="Unread" />}
         </span>
         <span className={cn("block text-sm text-muted-foreground", compact ? "line-clamp-2" : "line-clamp-3")}>{notification.body}</span>
-        <span className="block text-xs text-muted-foreground/80">
+        <span className="block text-xs text-muted-foreground">
           <RelativeTime value={notification.createdAt} />
         </span>
       </span>
