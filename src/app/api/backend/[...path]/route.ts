@@ -28,6 +28,7 @@ const forward = async (request: NextRequest, context: RouteContext<"/api/backend
     search: request.nextUrl.search,
     token: request.cookies.get(ACCESS_COOKIE)?.value,
     client: getClientInfo(request.headers),
+    requestId: crypto.randomUUID(),
     ...(hasBody
       ? isJson
         ? { json: await request.json().catch(() => ({})) }

@@ -7,11 +7,13 @@ import type { User } from "@/types";
 
 export type SessionPayload = TokenPair & { user: User };
 
+const requestIdHeader = (requestId: string): Record<string, string> => (requestId ? { "X-Request-Id": requestId } : {});
+
 export const sessionResponse = (result: BackendResult<SessionPayload>, redirect?: string | null) => {
   if (result.status >= 400 || !result.body.success || !result.body.data?.accessToken) {
     return NextResponse.json(result.body, {
       status: result.status >= 400 ? result.status : 502,
-      headers: { "X-Request-Id": result.requestId },
+      headers: requestIdHeader(result.requestId),
     });
   }
 
@@ -22,7 +24,7 @@ export const sessionResponse = (result: BackendResult<SessionPayload>, redirect?
       message: result.body.message,
       data: { user, redirectTo: getSafeRedirect(redirect, user.role) },
     },
-    { status: result.status, headers: { "X-Request-Id": result.requestId } }
+    { status: result.status, headers: requestIdHeader(result.requestId) }
   );
 
   setAuthCookies(response.cookies, { accessToken, refreshToken });
