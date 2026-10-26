@@ -5,6 +5,7 @@ const PUBLIC_PAGES = [
   { path: "/", priority: 1, changeFrequency: "daily" },
   { path: "/services", priority: 0.9, changeFrequency: "weekly" },
   { path: "/track", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/map", priority: 0.8, changeFrequency: "daily" },
   { path: "/about", priority: 0.6, changeFrequency: "monthly" },
   { path: "/faq", priority: 0.6, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.5, changeFrequency: "yearly" },

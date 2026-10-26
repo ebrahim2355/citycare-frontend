@@ -10,6 +10,7 @@ const columns = [
     links: [
       { href: "/services", label: "Services and fees" },
       { href: "/track", label: "Track a report" },
+      { href: "/map", label: "City issue map" },
       { href: "/faq", label: "Questions and answers" },
     ],
   },

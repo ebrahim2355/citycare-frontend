@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, ChevronRight, CircleHelp, House, Landmark, LayoutGrid, type LucideIcon, Mail, Menu, Phone, Search } from "lucide-react";
+import { ArrowRight, ChevronRight, CircleHelp, House, Landmark, LayoutGrid, type LucideIcon, Mail, MapPinned, Menu, Phone, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +19,7 @@ const PUBLIC_LINKS: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/", label: "Home", icon: House },
   { href: "/services", label: "Services", icon: LayoutGrid },
   { href: "/track", label: "Track", icon: Search },
+  { href: "/map", label: "Issue map", icon: MapPinned },
   { href: "/about", label: "About", icon: Landmark },
   { href: "/faq", label: "FAQ", icon: CircleHelp },
   { href: "/contact", label: "Contact", icon: Mail },

@@ -17,3 +17,8 @@ export const LazyLocationPreview = dynamic(() => import("@/components/map/locati
   ssr: false,
   loading: mapLoading("h-56"),
 });
+
+export const LazyReportMap = dynamic(() => import("@/components/map/report-map"), {
+  ssr: false,
+  loading: mapLoading("h-[28rem]"),
+});
