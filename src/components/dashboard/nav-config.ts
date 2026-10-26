@@ -12,6 +12,8 @@ import {
   LayoutDashboard,
   ListChecks,
   type LucideIcon,
+  Map,
+  MapPinned,
   Settings,
   Tags,
   UserRound,
@@ -56,6 +58,7 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
       items: [
         { href: "/staff", label: "Overview", icon: LayoutDashboard, exact: true },
         { href: "/staff/tasks", label: "My tasks", icon: ListChecks },
+        { href: "/staff/map", label: "Jobs map", icon: MapPinned },
         { href: "/staff/performance", label: "Performance", icon: BarChart3 },
       ],
     },
@@ -72,6 +75,7 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
       items: [
         { href: "/admin", label: "Overview", icon: Gauge, exact: true },
         { href: "/admin/complaints", label: "Complaints", icon: FolderKanban },
+        { href: "/admin/map", label: "City map", icon: Map },
         { href: "/admin/messages", label: "Messages", icon: Inbox, badge: "messages" },
         { href: "/admin/notifications", label: "Notifications", icon: Bell, badge: "notifications" },
       ],
