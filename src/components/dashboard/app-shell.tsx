@@ -12,6 +12,7 @@ import { Logo } from "@/components/layout/logo";
 import { RouteTransition } from "@/components/layout/route-transition";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserMenu } from "@/components/layout/user-menu";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -201,6 +202,7 @@ export function AppShell({ user: initialUser, children }: { user: User; children
             <SyncIndicator />
             <CommandPalette role={user.role} />
             <span className="hidden rounded-md border bg-card px-2 py-1 text-xs font-medium text-muted-foreground xl:inline">{roleLine(user)}</span>
+            <NotificationBell role={user.role} />
             <ThemeToggle />
             <UserMenu user={user} showName />
           </div>

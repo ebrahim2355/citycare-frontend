@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Bell,
   Building2,
   ClipboardList,
   CreditCard,
@@ -24,7 +25,7 @@ export interface NavItem {
   label: string;
   icon: LucideIcon;
   exact?: boolean;
-  badge?: "messages";
+  badge?: "messages" | "notifications";
 }
 
 export interface NavSection {
@@ -42,7 +43,13 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
         { href: "/dashboard/payments", label: "Payments", icon: CreditCard },
       ],
     },
-    { title: "Account", items: [{ href: "/dashboard/profile", label: "Profile", icon: UserRound }] },
+    {
+      title: "Account",
+      items: [
+        { href: "/dashboard/notifications", label: "Notifications", icon: Bell, badge: "notifications" },
+        { href: "/dashboard/profile", label: "Profile", icon: UserRound },
+      ],
+    },
   ],
   STAFF: [
     {
@@ -52,7 +59,13 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
         { href: "/staff/performance", label: "Performance", icon: BarChart3 },
       ],
     },
-    { title: "Account", items: [{ href: "/staff/profile", label: "Profile and availability", icon: UserRound }] },
+    {
+      title: "Account",
+      items: [
+        { href: "/staff/notifications", label: "Notifications", icon: Bell, badge: "notifications" },
+        { href: "/staff/profile", label: "Profile and availability", icon: UserRound },
+      ],
+    },
   ],
   ADMIN: [
     {
@@ -60,6 +73,7 @@ export const NAVIGATION: Record<Role, NavSection[]> = {
         { href: "/admin", label: "Overview", icon: Gauge, exact: true },
         { href: "/admin/complaints", label: "Complaints", icon: FolderKanban },
         { href: "/admin/messages", label: "Messages", icon: Inbox, badge: "messages" },
+        { href: "/admin/notifications", label: "Notifications", icon: Bell, badge: "notifications" },
       ],
     },
     {

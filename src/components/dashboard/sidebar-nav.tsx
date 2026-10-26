@@ -5,14 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isNavActive, NAVIGATION, type NavItem } from "@/components/dashboard/nav-config";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { adminQueries } from "@/lib/query/options";
+import { badgeCount } from "@/lib/notifications";
+import { adminQueries, notificationQueries } from "@/lib/query/options";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/types";
 
-function MessagesBadge({ collapsed }: { collapsed: boolean }) {
-  const { data } = useQuery(adminQueries.newMessageCount());
-
-  if (!data) {
+function CountBadge({ count, label, collapsed }: { count: number | undefined; label: string; collapsed: boolean }) {
+  if (!count) {
     return null;
   }
 
@@ -22,11 +21,23 @@ function MessagesBadge({ collapsed }: { collapsed: boolean }) {
         "ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-sidebar-primary px-1.5 text-[11px] font-semibold text-sidebar-primary-foreground",
         collapsed && "absolute top-1 right-1 ml-0 min-w-4 px-1 text-[10px]"
       )}
-      aria-label={`${data} new messages`}
+      aria-label={`${count} ${label}`}
     >
-      {data}
+      {badgeCount(count)}
     </span>
   );
+}
+
+function MessagesBadge({ collapsed }: { collapsed: boolean }) {
+  const { data } = useQuery(adminQueries.newMessageCount());
+
+  return <CountBadge count={data} label="new messages" collapsed={collapsed} />;
+}
+
+function NotificationsBadge({ collapsed }: { collapsed: boolean }) {
+  const { data } = useQuery(notificationQueries.unreadCount());
+
+  return <CountBadge count={data} label="unread notifications" collapsed={collapsed} />;
 }
 
 function NavLink({ item, active, collapsed, onNavigate }: { item: NavItem; active: boolean; collapsed: boolean; onNavigate?: () => void }) {
@@ -51,6 +62,7 @@ function NavLink({ item, active, collapsed, onNavigate }: { item: NavItem; activ
       <item.icon className={cn("size-4.5 shrink-0 transition-colors", active && "text-sidebar-primary")} aria-hidden />
       <span className={cn("truncate", collapsed && "sr-only")}>{item.label}</span>
       {item.badge === "messages" && <MessagesBadge collapsed={collapsed} />}
+      {item.badge === "notifications" && <NotificationsBadge collapsed={collapsed} />}
     </Link>
   );
 
