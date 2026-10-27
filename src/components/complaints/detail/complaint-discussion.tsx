@@ -179,7 +179,10 @@ export function ComplaintDiscussion({ complaintId }: { complaintId: string }) {
                   onKeyDown={(event) => {
                     if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
                       event.preventDefault();
-                      submit();
+
+                      if (!send.isPending) {
+                        submit();
+                      }
                     }
                   }}
                 />
