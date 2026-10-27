@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { toLocalPath } from "@/lib/roles";
 import { API_URL } from "@/lib/server/backend";
 
 export function GET(request: NextRequest) {
-  const next = request.nextUrl.searchParams.get("redirect");
+  const next = toLocalPath(request.nextUrl.searchParams.get("redirect"));
   const callback = new URL("/api/auth/google/callback", request.nextUrl.origin);
 
-  if (next?.startsWith("/") && !next.startsWith("//")) {
+  if (next) {
     callback.searchParams.set("next", next);
   }
 

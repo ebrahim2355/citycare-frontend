@@ -29,18 +29,22 @@ export const isGuestOnlyPath = (pathname: string) => GUEST_ONLY_PATHS.some((path
 
 const LOCAL_ORIGIN = "https://citycare.invalid";
 
-const toLocalPath = (value: string) => {
+export const toLocalPath = (value: string | null | undefined) => {
+  if (!value?.startsWith("/")) {
+    return null;
+  }
+
   try {
     const url = new URL(value, LOCAL_ORIGIN);
 
-    return url.origin === LOCAL_ORIGIN ? `${url.pathname}${url.search}${url.hash}` : null;
+    return url.origin === LOCAL_ORIGIN && !url.pathname.startsWith("//") ? `${url.pathname}${url.search}${url.hash}` : null;
   } catch {
     return null;
   }
 };
 
 export const getSafeRedirect = (value: string | null | undefined, role: Role) => {
-  const path = value?.startsWith("/") ? toLocalPath(value) : null;
+  const path = toLocalPath(value);
 
   if (!path) {
     return ROLE_HOME[role];
