@@ -1,6 +1,7 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
+import "./city-map.css";
 import L from "leaflet";
 import type { ReactNode } from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
