@@ -209,14 +209,14 @@ export function AdminOverview() {
                 value={data.feedback.averageRating ? `${data.feedback.averageRating.toFixed(2)} ★` : "—"}
                 icon={Star}
                 tone="amber"
-                hint={`${formatNumber(data.feedback.total)} citizen ratings`}
+                hint={pluralize(data.feedback.total, "citizen rating")}
               />
               <StatCard
                 label="People"
                 value={formatNumber(data.users.total)}
                 icon={Users}
                 tone="teal"
-                hint={`${data.users.citizens} citizens · ${data.users.staff} staff · ${data.users.admins} admins`}
+                hint={`${pluralize(data.users.citizens, "citizen")} · ${formatNumber(data.users.staff)} staff · ${pluralize(data.users.admins, "admin")}`}
                 href="/admin/users"
               />
               <StatCard
@@ -232,7 +232,7 @@ export function AdminOverview() {
                 value={formatNumber(data.complaints.total)}
                 icon={FolderOpen}
                 tone="teal"
-                hint={`${data.users.blocked} blocked accounts`}
+                hint={pluralize(data.users.blocked, "blocked account")}
                 href="/admin/complaints"
               />
             </>
