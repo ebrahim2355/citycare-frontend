@@ -17,14 +17,16 @@ interface SupportButtonProps {
   complaintId: string;
   supportCount: number;
   supported?: boolean;
+  isMine?: boolean;
   redirect: string;
   className?: string;
 }
 
-export function SupportButton({ complaintId, supportCount, supported: initiallySupported = false, redirect, className }: SupportButtonProps) {
+export function SupportButton({ complaintId, supportCount, supported = false, isMine = false, redirect, className }: SupportButtonProps) {
   const queryClient = useQueryClient();
   const { user, isLoading } = useSession();
-  const [state, setState] = useState<SupportResult>({ supportCount, supported: initiallySupported });
+  const [result, setResult] = useState<SupportResult | null>(null);
+  const state = result ?? { supportCount, supported };
 
   const toggle = useApiMutation({
     mutationFn: async (support: boolean) => {
@@ -32,10 +34,11 @@ export function SupportButton({ complaintId, supportCount, supported: initiallyS
 
       return (support ? await api.post<SupportResult>(path) : await api.delete<SupportResult>(path)).data;
     },
-    successMessage: (result) => (result.supported ? "Thanks. You are counted as affected too." : "Your support was withdrawn"),
-    onSuccess: (result) => {
-      setState(result);
+    successMessage: (next) => (next.supported ? "Thanks. You are counted as affected too." : "Your support was withdrawn"),
+    onSuccess: (next) => {
+      setResult(next);
       queryClient.invalidateQueries({ queryKey: ["public-reports"] });
+      queryClient.invalidateQueries({ queryKey: ["tracking"] });
     },
   });
 
@@ -54,23 +57,26 @@ export function SupportButton({ complaintId, supportCount, supported: initiallyS
     );
   }
 
-  if (user.role !== "CITIZEN") {
+  if (user.role !== "CITIZEN" || isMine) {
     return <span className={cn("text-sm text-muted-foreground", className)}>{pluralize(state.supportCount, "supporter")}</span>;
   }
 
   return (
     <Button
+      type="button"
       variant={state.supported ? "secondary" : "outline"}
       size="sm"
       className={className}
       aria-pressed={state.supported}
-      aria-label={state.supported ? "Withdraw your support" : "Support this report, it affects me too"}
       disabled={toggle.isPending}
       onClick={() => toggle.mutate(!state.supported)}
     >
       {toggle.isPending ? <Spinner /> : <ThumbsUp data-icon="inline-start" className={cn(state.supported && "fill-current")} />}
       {state.supported ? "Supported" : "Me too"}
-      <span className="text-muted-foreground tabular-nums">{state.supportCount}</span>
+      <span className="text-muted-foreground tabular-nums">
+        {state.supportCount}
+        <span className="sr-only"> {state.supportCount === 1 ? "supporter" : "supporters"}</span>
+      </span>
     </Button>
   );
 }

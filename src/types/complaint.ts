@@ -131,6 +131,8 @@ export interface TrackedComplaint {
   latitude: number | null;
   longitude: number | null;
   supportCount: number;
+  isMine: boolean;
+  supportedByMe: boolean;
   category: { name: string };
   department: { name: string };
   updates: { fromStatus: ComplaintStatus | null; toStatus: ComplaintStatus; createdAt: string }[];
@@ -149,14 +151,14 @@ export interface PublicReport {
   resolvedAt: string | null;
   isOverdue: boolean;
   supportCount: number;
+  isMine: boolean;
+  supportedByMe: boolean;
   category: NamedRef;
   department: NamedRef;
 }
 
 export interface NearbyReport extends PublicReport {
   distanceMeters: number;
-  isMine: boolean;
-  supportedByMe: boolean;
 }
 
 export interface MapComplaint {

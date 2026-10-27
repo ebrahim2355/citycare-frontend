@@ -10,7 +10,16 @@ interface PublicReport {
   category: { name: string };
 }
 
+interface OwnReport {
+  trackingCode: string;
+  status: string;
+  isPublic: boolean;
+  latitude: number | null;
+}
+
 const OPEN = ["SUBMITTED", "ASSIGNED", "IN_PROGRESS"];
+
+const SUPPORT_BUTTON = /^(Me too|Supported)/;
 
 test.use({ storageState: storageStateOf("neighbour") });
 
@@ -28,13 +37,16 @@ test("a neighbour adds their voice to a public report from the tracking page", a
   await page.goto("/dashboard");
 
   const report = await otherPeoplesReport(page);
+  const tracked = await backend<{ supportedByMe: boolean }>(page, `/complaints/track/${report.trackingCode}`);
 
   await page.goto(`/track?code=${report.trackingCode}`);
   await expect(page.getByRole("region", { name: /Map of the report/ }).locator(".citycare-pin")).toBeVisible();
 
-  const button = page.getByRole("button", { name: /Support this report|Withdraw your support/ });
+  const button = page.getByRole("button", { name: SUPPORT_BUTTON });
 
-  if ((await button.getAttribute("aria-pressed")) === "true") {
+  await expect(button).toHaveAttribute("aria-pressed", String(tracked.supportedByMe));
+
+  if (tracked.supportedByMe) {
     await button.click();
     await expect(button).toHaveAttribute("aria-pressed", "false");
   }
@@ -42,9 +54,29 @@ test("a neighbour adds their voice to a public report from the tracking page", a
   await button.click();
   await expect(button).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText("Thanks. You are counted as affected too.")).toBeVisible();
+
+  const count = Number((await button.innerText()).match(/\d+/)?.[0]);
+
+  await expect(page.getByText(`${count} ${count === 1 ? "neighbour says" : "neighbours say"} this affects them too.`)).toBeVisible();
 });
 
-test("the wizard points to the same problem nearby before a duplicate is sent", async ({ page }) => {
+test("the owner of a public report sees its supporters instead of a support button", async ({ browser }) => {
+  const context = await browser.newContext({ storageState: storageStateOf("citizen") });
+  const page = await context.newPage();
+
+  await page.goto("/dashboard");
+
+  const own = await backend<OwnReport[]>(page, "/complaints?limit=100");
+  const report = own.find((item) => item.isPublic && item.latitude !== null && OPEN.includes(item.status));
+
+  expect(report, "an open public report of the citizen").toBeTruthy();
+  await page.goto(`/track?code=${report?.trackingCode}`);
+  await expect(page.getByText(/^\d+ supporters?$/)).toBeVisible();
+  await expect(page.getByRole("button", { name: SUPPORT_BUTTON })).toHaveCount(0);
+  await context.close();
+});
+
+test("the wizard points to the same problem nearby and adding a voice there keeps the draft open", async ({ page }) => {
   await page.goto("/dashboard/complaints/new");
 
   const report = await otherPeoplesReport(page);
@@ -67,4 +99,15 @@ test("the wizard points to the same problem nearby before a duplicate is sent", 
   await page.getByRole("button", { name: "Continue" }).click();
 
   await expect(page.getByText(/already reported this nearby|similar reports are already open nearby/)).toBeVisible();
+
+  await page.getByLabel("Area", { exact: true }).fill("Dhanmondi");
+  await page.getByLabel("Address or landmark").fill("Right where the other report is");
+
+  const voice = page.getByRole("button", { name: SUPPORT_BUTTON }).first();
+  const pressed = await voice.getAttribute("aria-pressed");
+
+  await voice.click();
+  await expect(voice).toHaveAttribute("aria-pressed", pressed === "true" ? "false" : "true");
+  await expect(page.getByText("Where is it?")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Skip photos" })).toHaveCount(0);
 });

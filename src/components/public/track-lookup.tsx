@@ -89,7 +89,13 @@ function TrackResult({ code }: { code: string }) {
                 : "Nobody else has said this affects them yet."}
             </p>
             {OPEN_STATUSES.includes(data.status) && (
-              <SupportButton complaintId={data.id} supportCount={data.supportCount} redirect={`/track?code=${data.trackingCode}`} />
+              <SupportButton
+                complaintId={data.id}
+                supportCount={data.supportCount}
+                supported={data.supportedByMe}
+                isMine={data.isMine}
+                redirect={`/track?code=${data.trackingCode}`}
+              />
             )}
           </div>
         </div>
@@ -147,7 +153,7 @@ export function TrackLookup() {
           </p>
         )}
       </div>
-      {code && <TrackResult code={code} />}
+      {code && <TrackResult key={code} code={code} />}
     </div>
   );
 }
