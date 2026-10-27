@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Crosshair, EyeOff, MapPinned, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 import { SupportButton } from "@/components/community/support-button";
 import { LazyReportMap } from "@/components/map/lazy";
 import type { MapFocus } from "@/components/map/report-map";
@@ -48,7 +49,15 @@ function ReportPopup({ report }: { report: PublicReport }) {
         <Button asChild size="sm" variant="outline">
           <Link href={`/track?code=${report.trackingCode}`}>Track</Link>
         </Button>
-        {OPEN_STATUSES.includes(report.status) && <SupportButton complaintId={report.id} supportCount={report.supportCount} redirect="/map" />}
+        {OPEN_STATUSES.includes(report.status) && (
+          <SupportButton
+            complaintId={report.id}
+            supportCount={report.supportCount}
+            supported={report.supportedByMe}
+            isMine={report.isMine}
+            redirect="/map"
+          />
+        )}
       </div>
     </div>
   );
@@ -91,20 +100,33 @@ export function IssueMap() {
   const overdueCount = items.filter((report) => report.isOverdue).length;
 
   const locate = () => {
-    if (!("geolocation" in navigator) || !ranked.length) {
+    if (!ranked.length) {
       return;
     }
 
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      const closest = [...ranked].sort(
-        (a, b) => Math.hypot(a.latitude - latitude, a.longitude - longitude) - Math.hypot(b.latitude - latitude, b.longitude - longitude)
-      )[0];
+    if (!("geolocation" in navigator)) {
+      toast.error("Your browser cannot share its location");
+      return;
+    }
 
-      if (closest) {
-        setFocus({ id: closest.id, nonce: Date.now() });
-      }
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const closest = [...ranked].sort(
+          (a, b) => Math.hypot(a.latitude - latitude, a.longitude - longitude) - Math.hypot(b.latitude - latitude, b.longitude - longitude)
+        )[0];
+
+        if (closest) {
+          setFocus({ id: closest.id, nonce: Date.now() });
+        }
+      },
+      (error) => {
+        toast.error("Could not get your location", {
+          description: error.code === error.PERMISSION_DENIED ? "Location access was blocked in the browser." : "Please try again in a moment.",
+        });
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+    );
   };
 
   return (
@@ -198,7 +220,7 @@ export function IssueMap() {
                     <Skeleton className="h-3 w-2/5" />
                   </li>
                 ))
-              : ranked.slice(0, 30).map((report) => (
+              : ranked.map((report) => (
                   <li key={report.id}>
                     <button
                       type="button"
