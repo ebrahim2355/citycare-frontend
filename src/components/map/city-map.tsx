@@ -3,8 +3,8 @@
 import "leaflet/dist/leaflet.css";
 import "./city-map.css";
 import L from "leaflet";
-import type { ReactNode } from "react";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { type ReactNode, useEffect } from "react";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import type { LatLng } from "@/lib/geo";
 import { cn } from "@/lib/utils";
 
@@ -21,11 +21,26 @@ interface CityMapProps {
   scrollWheelZoom?: boolean;
 }
 
+function FollowSize() {
+  const map = useMap();
+
+  useEffect(() => {
+    const observer = new ResizeObserver(() => map.invalidateSize());
+
+    observer.observe(map.getContainer());
+
+    return () => observer.disconnect();
+  }, [map]);
+
+  return null;
+}
+
 export function CityMap({ center, zoom, label, className, children, scrollWheelZoom = false }: CityMapProps) {
   return (
     <div role="region" aria-label={label} className={cn("isolate overflow-hidden rounded-xl border", className)}>
       <MapContainer center={center} zoom={zoom} scrollWheelZoom={scrollWheelZoom} className="size-full" zoomControl>
         <TileLayer url={TILE_URL} attribution={ATTRIBUTION} maxZoom={19} />
+        <FollowSize />
         {children}
       </MapContainer>
     </div>

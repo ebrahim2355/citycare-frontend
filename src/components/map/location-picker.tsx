@@ -23,7 +23,15 @@ const toLocation = ({ lat, lng }: { lat: number; lng: number }): PickedLocation 
 });
 
 function PickOnClick({ onPick }: { onPick: (location: PickedLocation) => void }) {
-  useMapEvents({ click: (event) => onPick(toLocation(event.latlng)) });
+  const map = useMapEvents({
+    click: (event) => onPick(toLocation(event.latlng)),
+    keydown: (event) => {
+      if (event.originalEvent.key === "Enter" || event.originalEvent.key === " ") {
+        event.originalEvent.preventDefault();
+        onPick(toLocation(map.getCenter()));
+      }
+    },
+  });
 
   return null;
 }
@@ -64,8 +72,8 @@ export default function LocationPicker({ value, fallbackCenter, onChange }: Loca
     <CityMap
       center={position ?? fallbackCenter}
       zoom={position ? 16 : 13}
-      label="Map. Click or tap to drop a pin on the exact spot"
-      className="h-72 [&_.leaflet-container]:cursor-crosshair"
+      label="Map. Click or tap to drop a pin on the exact spot, or move the map with the arrow keys and press Enter to pin its centre"
+      className="citycare-picker h-72 [&_.leaflet-container]:cursor-crosshair"
     >
       <PickOnClick onPick={onChange} />
       <KeepInView position={position} fallbackCenter={fallbackCenter} />

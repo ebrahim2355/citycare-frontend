@@ -74,3 +74,18 @@
   border: none;
   filter: drop-shadow(0 4px 6px oklch(0 0 0 / 30%));
 }
+
+.citycare-picker .leaflet-container:focus-visible::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  border: 2px solid var(--primary);
+  border-radius: 9999px;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--background) 80%, transparent);
+  pointer-events: none;
+}
