@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNotificationActions } from "@/hooks/use-notifications";
-import { badgeCount, complaintHref, notificationsHref } from "@/lib/notifications";
+import { badgeCount, notificationHref, notificationsHref } from "@/lib/notifications";
 import { notificationQueries, queryKeys } from "@/lib/query/options";
 import type { Role } from "@/types";
 
@@ -39,12 +39,12 @@ function useArrivalToast(unread: number | undefined, role: Role) {
       .fetchQuery({ ...notificationQueries.latest(), staleTime: 0 })
       .then(({ items }) => {
         const newest = items.find((item) => !item.readAt);
-        const complaint = newest?.complaint;
+        const href = newest ? notificationHref(role, newest) : null;
 
         if (newest) {
           toast(newest.title, {
             description: newest.body,
-            action: complaint ? { label: "Open", onClick: () => router.push(complaintHref(role, complaint.id)) } : undefined,
+            action: href ? { label: "Open", onClick: () => router.push(href) } : undefined,
           });
         }
       })
@@ -93,6 +93,13 @@ export function NotificationBell({ role }: { role: Role }) {
                 </div>
               </div>
             ))
+          ) : latest.isError && !latest.data ? (
+            <div className="flex flex-col items-center gap-3 px-6 py-10 text-center">
+              <p className="text-sm font-medium">Notifications could not be loaded</p>
+              <Button variant="outline" size="sm" disabled={latest.isFetching} onClick={() => latest.refetch()}>
+                Try again
+              </Button>
+            </div>
           ) : latest.data?.items.length ? (
             latest.data.items.map((notification) => (
               <NotificationItem

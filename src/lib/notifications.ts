@@ -14,7 +14,7 @@ import {
   UserMinus,
 } from "lucide-react";
 import { ROLE_HOME } from "@/lib/roles";
-import type { NotificationType, Role } from "@/types";
+import type { AppNotification, NotificationType, Role } from "@/types";
 
 export const NOTIFICATION_STYLE: Record<NotificationType, { icon: LucideIcon; tone: string }> = {
   COMPLAINT_SUBMITTED: { icon: Inbox, tone: "bg-sky-500/12 text-sky-700 dark:text-sky-300" },
@@ -38,6 +38,14 @@ const COMPLAINT_PATHS: Record<Role, string> = {
 };
 
 export const complaintHref = (role: Role, complaintId: string) => `${COMPLAINT_PATHS[role]}/${complaintId}`;
+
+export const notificationHref = (role: Role, notification: Pick<AppNotification, "type" | "complaint">) => {
+  if (!notification.complaint || (role === "STAFF" && notification.type === "COMPLAINT_UNASSIGNED")) {
+    return null;
+  }
+
+  return complaintHref(role, notification.complaint.id);
+};
 
 export const notificationsHref = (role: Role) => `${ROLE_HOME[role]}/notifications`;
 

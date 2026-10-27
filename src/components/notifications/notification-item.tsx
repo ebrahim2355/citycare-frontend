@@ -27,8 +27,11 @@ export function NotificationItem({ notification, onOpen, compact = false }: Noti
       </span>
       <span className="min-w-0 flex-1 space-y-0.5">
         <span className="flex items-start justify-between gap-2">
-          <span className={cn("text-sm leading-snug", unread ? "font-semibold" : "font-medium text-foreground/85")}>{notification.title}</span>
-          {unread && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" aria-label="Unread" />}
+          <span className={cn("text-sm leading-snug", unread ? "font-semibold" : "font-medium text-foreground/85")}>
+            {unread && <span className="sr-only">Unread: </span>}
+            {notification.title}
+          </span>
+          {unread && <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" aria-hidden />}
         </span>
         <span className={cn("block text-sm text-muted-foreground", compact ? "line-clamp-2" : "line-clamp-3")}>{notification.body}</span>
         <span className="block text-xs text-muted-foreground">

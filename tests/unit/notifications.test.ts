@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { badgeCount, complaintHref, NOTIFICATION_STYLE, notificationsHref } from "@/lib/notifications";
+import { badgeCount, complaintHref, NOTIFICATION_STYLE, notificationHref, notificationsHref } from "@/lib/notifications";
 import type { NotificationType } from "@/types";
 
 const TYPES: NotificationType[] = [
@@ -22,6 +22,15 @@ describe("notification links", () => {
     expect(complaintHref("CITIZEN", "c1")).toBe("/dashboard/complaints/c1");
     expect(complaintHref("STAFF", "c1")).toBe("/staff/tasks/c1");
     expect(complaintHref("ADMIN", "c1")).toBe("/admin/complaints/c1");
+  });
+
+  it("never sends staff to a job that was moved away from them", () => {
+    const complaint = { id: "c1", trackingCode: "CC-1" };
+
+    expect(notificationHref("STAFF", { type: "COMPLAINT_UNASSIGNED", complaint })).toBeNull();
+    expect(notificationHref("STAFF", { type: "COMPLAINT_ASSIGNED", complaint })).toBe("/staff/tasks/c1");
+    expect(notificationHref("CITIZEN", { type: "COMPLAINT_STATUS_CHANGED", complaint })).toBe("/dashboard/complaints/c1");
+    expect(notificationHref("ADMIN", { type: "SLA_BREACHED", complaint: null })).toBeNull();
   });
 
   it("points each role to its own notification page", () => {

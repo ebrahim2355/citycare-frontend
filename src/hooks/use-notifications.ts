@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/lib/api/client";
-import { complaintHref } from "@/lib/notifications";
+import { notificationHref } from "@/lib/notifications";
 import { queryKeys } from "@/lib/query/options";
 import type { AppNotification, Role } from "@/types";
 
@@ -32,8 +32,10 @@ export function useNotificationActions(role: Role) {
       markRead.mutate(notification.id);
     }
 
-    if (notification.complaint) {
-      router.push(complaintHref(role, notification.complaint.id));
+    const href = notificationHref(role, notification);
+
+    if (href) {
+      router.push(href);
     }
   };
 
