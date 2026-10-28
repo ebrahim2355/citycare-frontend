@@ -13,10 +13,12 @@ import { useUrlFilters } from "@/hooks/use-url-filters";
 import { api } from "@/lib/api/client";
 import { paymentFilterSchema } from "@/lib/filters";
 import { formatMoney, formatNumber } from "@/lib/format";
+import { PAYMENT_METHOD_META } from "@/lib/payment-methods";
 import { queryKeys, statsQueries } from "@/lib/query/options";
 import type { Payment } from "@/types";
 
 function RefundAction({ payment }: { payment: Payment }) {
+  const meta = PAYMENT_METHOD_META[payment.method];
   const refund = useApiMutation({
     mutationFn: () => api.post(`/payments/${payment.id}/refund`),
     successMessage: `${formatMoney(payment.amount, payment.currency)} refunded to ${payment.citizen.name}`,
@@ -37,7 +39,7 @@ function RefundAction({ payment }: { payment: Payment }) {
         </Button>
       }
       title="Refund this payment?"
-      description={`${formatMoney(payment.amount, payment.currency)} goes back to ${payment.citizen.name} through Stripe. Refunds normally happen on their own when a paid request is rejected, so use this only when that refund failed.`}
+      description={`${formatMoney(payment.amount, payment.currency)} goes back to ${meta.refundTo} of ${payment.citizen.name} through ${meta.provider}. Refunds normally happen on their own when a paid request is rejected, so use this only when that refund failed.`}
       confirmLabel="Refund payment"
       pending={refund.isPending}
       onConfirm={() => refund.mutate()}
@@ -48,7 +50,9 @@ function RefundAction({ payment }: { payment: Payment }) {
 function ExportPayments() {
   const { filters } = useUrlFilters(paymentFilterSchema);
 
-  return <ExportButton path="/admin/exports/payments" params={filters.status ? { status: filters.status } : {}} />;
+  const params = Object.fromEntries(Object.entries({ status: filters.status, method: filters.method }).filter(([, value]) => value));
+
+  return <ExportButton path="/admin/exports/payments" params={params} />;
 }
 
 export function AdminPayments() {
@@ -59,7 +63,7 @@ export function AdminPayments() {
     <div className="space-y-6">
       <PageHeader
         title="Payments"
-        description="Every Stripe checkout for paid services, with refunds for requests that did not go ahead."
+        description="Every card, bKash and Nagad payment for paid services, with refunds for requests that did not go ahead."
         actions={<ExportPayments />}
       />
       <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">

@@ -57,6 +57,7 @@ export const complaintFilterSchema = z.object({
 export const paymentFilterSchema = z.object({
   page,
   status: optionalEnum(["PENDING", "COMPLETED", "FAILED", "CANCELLED", "REFUNDED"]),
+  method: optionalEnum(["CARD", "BKASH", "NAGAD"]),
   sortOrder,
 });
 

@@ -5,6 +5,7 @@ import { CreditCard, FilterX } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { type Column, DataTable } from "@/components/shared/data-table";
+import { PaymentMethodLabel } from "@/components/payment/payment-method-mark";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { FilterSelect } from "@/components/shared/filter-select";
@@ -15,6 +16,7 @@ import { useUrlFilters } from "@/hooks/use-url-filters";
 import { PAYMENT_STATUS_META } from "@/lib/complaint-meta";
 import { paymentFilterSchema } from "@/lib/filters";
 import { formatDateTime, formatMoney } from "@/lib/format";
+import { PAYMENT_METHOD_META, PAYMENT_METHODS } from "@/lib/payment-methods";
 import { paymentQueries } from "@/lib/query/options";
 import type { Payment, PaymentStatus } from "@/types";
 
@@ -61,6 +63,7 @@ export function PaymentsBrowser({ complaintBasePath, showCitizen = false, rowAct
       header: "Amount",
       cell: (payment) => <span className="font-semibold tabular-nums">{formatMoney(payment.amount, payment.currency)}</span>,
     },
+    { key: "method", header: "Method", cell: (payment) => <PaymentMethodLabel method={payment.method} className="text-sm" /> },
     { key: "status", header: "Status", cell: (payment) => <PaymentStatusBadge status={payment.status} /> },
     {
       key: "date",
@@ -75,10 +78,10 @@ export function PaymentsBrowser({ complaintBasePath, showCitizen = false, rowAct
     ...(rowActions ? [{ key: "actions", header: <span className="sr-only">Actions</span>, className: "w-12", cell: rowActions }] : []),
   ];
 
-  const empty = filters.status ? (
+  const empty = filters.status || filters.method ? (
     <EmptyState
       icon={FilterX}
-      title="No payments with this status"
+      title="No payments match these filters"
       action={
         <Button variant="outline" onClick={clearFilters}>
           Show all payments
@@ -106,6 +109,13 @@ export function PaymentsBrowser({ complaintBasePath, showCitizen = false, rowAct
             value: status,
             label: PAYMENT_STATUS_META[status].label,
           }))}
+        />
+        <FilterSelect
+          value={filters.method}
+          onChange={(method) => setFilters({ method })}
+          placeholder="All methods"
+          label="Filter payments by method"
+          options={PAYMENT_METHODS.map((method) => ({ value: method, label: PAYMENT_METHOD_META[method].label }))}
         />
         <FilterSelect
           value={filters.sortOrder}
@@ -136,8 +146,11 @@ export function PaymentsBrowser({ complaintBasePath, showCitizen = false, rowAct
                   </Link>
                   <PaymentStatusBadge status={payment.status} />
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold tabular-nums">{formatMoney(payment.amount, payment.currency)}</span>
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="flex items-center gap-3">
+                    <span className="font-semibold tabular-nums">{formatMoney(payment.amount, payment.currency)}</span>
+                    <PaymentMethodLabel method={payment.method} className="text-xs text-muted-foreground" />
+                  </span>
                   <span className="text-muted-foreground">{formatDateTime(payment.paidAt ?? payment.createdAt)}</span>
                 </div>
                 {showCitizen && <p className="text-xs text-muted-foreground">{payment.citizen.name}</p>}
