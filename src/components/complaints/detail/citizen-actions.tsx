@@ -167,7 +167,7 @@ function CancelButton({ complaint }: { complaint: ComplaintDetail }) {
         </Button>
       }
       title="Cancel this report?"
-      description={`The city team will stop working on it.${complaint.paymentStatus === "PAID" ? " The fee you paid is refunded to your card." : ""}`}
+      description={`The city team will stop working on it.${complaint.paymentStatus === "PAID" ? " The fee you paid goes back to your card or wallet." : ""}`}
       confirmLabel="Cancel report"
       destructive
       pending={cancel.isPending}

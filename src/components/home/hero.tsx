@@ -124,7 +124,7 @@ function LiveBoard({ stats }: { stats: PublicStats | null }) {
 
 const trust = [
   { icon: ShieldCheck, text: "Free for public property" },
-  { icon: CreditCard, text: "Fees paid safely with Stripe" },
+  { icon: CreditCard, text: "Fees paid by card, bKash or Nagad" },
   { icon: Ticket, text: "A tracking code in seconds" },
 ];
 

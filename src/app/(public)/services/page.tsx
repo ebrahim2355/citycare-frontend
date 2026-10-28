@@ -56,8 +56,8 @@ function CategoryRow({ category }: { category: Category }) {
 
 const paidSteps = [
   { icon: Send, title: "Send the request", text: "You see the fixed fee before anything is charged." },
-  { icon: CreditCard, title: "Pay with Stripe", text: "The request goes to the department as soon as the payment is confirmed." },
-  { icon: RotateCcw, title: "Refund if it does not happen", text: "If the city rejects it, the fee goes back to your card automatically." },
+  { icon: CreditCard, title: "Pay by card, bKash or Nagad", text: "The request goes to the department as soon as the payment is confirmed." },
+  { icon: RotateCcw, title: "Refund if it does not happen", text: "If the city rejects it, the fee goes back to your card or wallet automatically." },
 ];
 
 export default async function ServicesPage() {

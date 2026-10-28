@@ -350,7 +350,7 @@ const roles = [
     icon: UserRound,
     title: "Citizens",
     accent: "bg-primary",
-    points: ["Report problems with photos and location", "Pay for home services with Stripe", "Track, rate and reopen your reports"],
+    points: ["Report problems with photos and location", "Pay for home services by card, bKash or Nagad", "Track, rate and reopen your reports"],
   },
   {
     icon: HardHat,

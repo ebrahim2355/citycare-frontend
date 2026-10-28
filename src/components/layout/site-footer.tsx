@@ -84,7 +84,7 @@ export function SiteFooter() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <span className="inline-flex items-center gap-1.5">
               <CreditCard className="size-3.5" aria-hidden />
-              Payments by Stripe
+              Payments by Stripe and SSLCommerz
             </span>
             <span className="inline-flex items-center gap-1.5">
               <ShieldCheck className="size-3.5" aria-hidden />

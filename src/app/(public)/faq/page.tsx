@@ -77,12 +77,12 @@ const groups = [
       {
         question: "How do I pay?",
         answer:
-          "Payments go through Stripe Checkout, so your card details never reach CityCare. This demo runs in Stripe test mode: use the card 4242 4242 4242 4242 with any future date and any CVC.",
+          "Pick card, bKash or Nagad. Cards go through Stripe Checkout and the two wallets through SSLCommerz, so your card and wallet details never reach CityCare. This demo runs in test mode: use the card 4242 4242 4242 4242 with any future date and any CVC, or pick bKash or Nagad and press Success on the SSLCommerz test page.",
       },
       {
         question: "What if my paid request is rejected or cancelled?",
         answer:
-          "The fee is refunded to your card automatically. You can see the refund on the payments page of your dashboard.",
+          "The fee goes back automatically to the card, bKash or Nagad account you paid with. You can see the refund on the payments page of your dashboard.",
       },
     ],
   },

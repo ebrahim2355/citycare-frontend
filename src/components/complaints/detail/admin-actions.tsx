@@ -236,7 +236,7 @@ function RejectDialog({ complaint }: { complaint: ComplaintDetail }) {
           <DialogTitle>Reject this report</DialogTitle>
           <DialogDescription>
             The citizen sees your reason.
-            {complaint.paymentStatus === "PAID" ? " The service fee is refunded to their card automatically." : ""}
+            {complaint.paymentStatus === "PAID" ? " The service fee goes back to their card or wallet automatically." : ""}
           </DialogDescription>
         </DialogHeader>
         <form

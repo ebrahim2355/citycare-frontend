@@ -34,7 +34,7 @@ const principles = [
   {
     icon: HandCoins,
     title: "Money back when it does not happen",
-    text: "Paid services are refunded to the card automatically if the request is rejected or cancelled.",
+    text: "Paid services are refunded automatically, to the same card or wallet, if the request is rejected or cancelled.",
   },
   {
     icon: FileClock,

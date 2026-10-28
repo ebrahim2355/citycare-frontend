@@ -9,7 +9,7 @@ import { getPublicStats } from "@/lib/server/public-api";
 const points = [
   { icon: CircleCheck, text: "A tracking code and a deadline for every report" },
   { icon: Clock3, text: "See who works on it and every status change" },
-  { icon: ShieldCheck, text: "Safe Stripe payments, refunded if the city says no" },
+  { icon: ShieldCheck, text: "Pay by card, bKash or Nagad, refunded if the city says no" },
 ];
 
 async function BrandPanel() {

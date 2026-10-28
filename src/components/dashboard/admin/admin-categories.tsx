@@ -68,7 +68,7 @@ function CategoryDialog({ category, open, onOpenChange }: { category: Category |
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{category ? `Edit ${category.name}` : "New category"}</DialogTitle>
-          <DialogDescription>Complaints are free. Paid services charge the fee through Stripe before work starts.</DialogDescription>
+          <DialogDescription>Complaints are free. Paid services charge the fee by card, bKash or Nagad before work starts.</DialogDescription>
         </DialogHeader>
         <form noValidate onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
           <FieldGroup>
