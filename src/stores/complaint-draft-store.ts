@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { ComplaintValues } from "@/lib/validations";
-import type { CategoryType } from "@/types";
+import type { CategoryType, PaymentMethod } from "@/types";
 
 export const WIZARD_STEPS = ["category", "details", "location", "photos", "review"] as const;
 
@@ -24,10 +24,12 @@ interface DraftState {
   kind: CategoryType;
   values: ComplaintValues;
   photos: File[];
+  paymentMethod: PaymentMethod;
   setStep: (step: WizardStep) => void;
   setKind: (kind: CategoryType) => void;
   saveValues: (values: Partial<ComplaintValues>) => void;
   setPhotos: (photos: File[]) => void;
+  setPaymentMethod: (paymentMethod: PaymentMethod) => void;
   reset: () => void;
 }
 
@@ -38,16 +40,18 @@ export const useComplaintDraft = create<DraftState>()(
       kind: "COMPLAINT",
       values: EMPTY_DRAFT,
       photos: [],
+      paymentMethod: "CARD",
       setStep: (step) => set({ step }),
       setKind: (kind) => set({ kind }),
       saveValues: (values) => set((state) => ({ values: { ...state.values, ...values } })),
       setPhotos: (photos) => set({ photos }),
+      setPaymentMethod: (paymentMethod) => set({ paymentMethod }),
       reset: () => set({ step: "category", kind: "COMPLAINT", values: EMPTY_DRAFT, photos: [] }),
     }),
     {
       name: "citycare-report-draft",
       storage: createJSONStorage(() => sessionStorage),
-      partialize: (state) => ({ step: state.step, kind: state.kind, values: state.values }),
+      partialize: (state) => ({ step: state.step, kind: state.kind, values: state.values, paymentMethod: state.paymentMethod }),
       skipHydration: true,
     }
   )

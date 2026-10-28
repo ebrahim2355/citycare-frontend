@@ -4,17 +4,22 @@ import { Pencil, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo } from "react";
 import { LazyLocationPreview } from "@/components/map/lazy";
+import { PaymentMethodPicker } from "@/components/payment/payment-method-picker";
 import { PriorityBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { formatMoney, formatSla } from "@/lib/format";
+import { PAYMENT_METHOD_META } from "@/lib/payment-methods";
 import type { ComplaintValues } from "@/lib/validations";
 import type { WizardStep } from "@/stores/complaint-draft-store";
-import type { Category } from "@/types";
+import type { Category, PaymentMethod } from "@/types";
 
 interface StepReviewProps {
   values: ComplaintValues;
   category: Category | undefined;
   photos: File[];
+  paymentMethod: PaymentMethod;
+  onPaymentMethodChange: (method: PaymentMethod) => void;
+  paymentDisabled?: boolean;
   onEdit: (step: WizardStep) => void;
 }
 
@@ -33,7 +38,7 @@ function Section({ title, step, onEdit, children }: { title: string; step: Wizar
   );
 }
 
-export function StepReview({ values, category, photos, onEdit }: StepReviewProps) {
+export function StepReview({ values, category, photos, paymentMethod, onPaymentMethodChange, paymentDisabled, onEdit }: StepReviewProps) {
   const previews = useMemo(() => photos.map((file) => URL.createObjectURL(file)), [photos]);
 
   useEffect(() => () => previews.forEach((url) => URL.revokeObjectURL(url)), [previews]);
@@ -93,13 +98,18 @@ export function StepReview({ values, category, photos, onEdit }: StepReviewProps
         )}
       </Section>
       {category?.type === "SERVICE" && (
-        <div className="flex gap-3 rounded-xl border border-amber-300/70 bg-amber-50 p-4 dark:border-amber-400/25 dark:bg-amber-400/10 text-sm">
-          <ShieldCheck className="size-5 shrink-0 text-amber-600" aria-hidden />
-          <p>
-            You will pay <span className="font-semibold">{formatMoney(category.fee)}</span> on the next screen with Stripe. The request reaches
-            the department as soon as the payment is confirmed, and the fee is refunded if the city rejects it.
-          </p>
-        </div>
+        <section className="space-y-3 rounded-xl border bg-card p-4">
+          <h3 className="text-sm font-semibold text-muted-foreground">Pay with</h3>
+          <PaymentMethodPicker value={paymentMethod} onChange={onPaymentMethodChange} disabled={paymentDisabled} />
+          <div className="flex gap-3 rounded-lg border border-amber-300/70 bg-amber-50 p-3 text-sm dark:border-amber-400/25 dark:bg-amber-400/10">
+            <ShieldCheck className="size-5 shrink-0 text-amber-600" aria-hidden />
+            <p>
+              You will pay <span className="font-semibold">{formatMoney(category.fee)}</span> on the next screen with{" "}
+              {PAYMENT_METHOD_META[paymentMethod].label}. The request reaches the department as soon as the payment is confirmed, and the fee
+              is refunded if the city rejects it.
+            </p>
+          </div>
+        </section>
       )}
     </div>
   );

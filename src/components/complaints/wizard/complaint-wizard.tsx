@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { checkoutDestination, startCheckout } from "@/hooks/use-checkout";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import { api } from "@/lib/api/client";
 import { getErrorText } from "@/lib/api/errors";
@@ -26,7 +27,7 @@ import { formatMoney } from "@/lib/format";
 import { catalogQueries, queryKeys } from "@/lib/query/options";
 import { complaintSchema, type ComplaintValues } from "@/lib/validations";
 import { EMPTY_DRAFT, useComplaintDraft, WIZARD_STEPS, type WizardStep } from "@/stores/complaint-draft-store";
-import type { CheckoutResult, ComplaintDetail } from "@/types";
+import type { ComplaintDetail } from "@/types";
 
 const STEP_FIELDS: Record<WizardStep, FieldPath<ComplaintValues>[]> = {
   category: ["categoryId"],
@@ -50,7 +51,8 @@ export function ComplaintWizard() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [ready, setReady] = useState(false);
-  const { step, kind, values: savedValues, photos, setStep, setKind, saveValues, setPhotos, reset } = useComplaintDraft();
+  const { step, kind, values: savedValues, photos, paymentMethod, setStep, setKind, saveValues, setPhotos, setPaymentMethod, reset } =
+    useComplaintDraft();
   const categories = useQuery(catalogQueries.categories());
   const { upload, progress, uploading } = useImageUpload();
 
@@ -103,16 +105,15 @@ export function ComplaintWizard() {
 
       if (created.status === "PENDING_PAYMENT") {
         try {
-          checkoutUrl = (await api.post<CheckoutResult>("/payments/initiate", { complaintId: created.id, clientUrl: window.location.origin }))
-            .data.checkoutUrl;
+          checkoutUrl = (await startCheckout({ complaintId: created.id, method: paymentMethod })).checkoutUrl;
         } catch (error) {
           paymentError = error;
         }
       }
 
-      return { created, photoResult, checkoutUrl, paymentError };
+      return { created, photoResult, checkoutUrl, paymentError, method: paymentMethod };
     },
-    onSuccess: async ({ created, photoResult, checkoutUrl, paymentError }) => {
+    onSuccess: async ({ created, photoResult, checkoutUrl, paymentError, method }) => {
       reset();
       form.reset(useComplaintDraft.getState().values);
       await Promise.all([
@@ -127,7 +128,7 @@ export function ComplaintWizard() {
       }
 
       if (checkoutUrl) {
-        toast.info("Taking you to Stripe to pay the fee");
+        toast.info(`Taking you to ${checkoutDestination(method)} to pay the fee`);
         window.location.assign(checkoutUrl);
         return;
       }
@@ -193,7 +194,15 @@ export function ComplaintWizard() {
             )}
             {step === "review" && (
               <div className="space-y-4">
-                <StepReview values={form.getValues()} category={category} photos={photos} onEdit={goTo} />
+                <StepReview
+                  values={form.getValues()}
+                  category={category}
+                  photos={photos}
+                  paymentMethod={paymentMethod}
+                  onPaymentMethodChange={setPaymentMethod}
+                  paymentDisabled={busy}
+                  onEdit={goTo}
+                />
                 {progress !== null && <UploadProgress progress={progress} />}
               </div>
             )}
