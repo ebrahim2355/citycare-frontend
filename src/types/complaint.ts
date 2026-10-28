@@ -17,6 +17,10 @@ export type ComplaintPaymentStatus = "NOT_REQUIRED" | "UNPAID" | "PAID" | "REFUN
 
 export type PaymentStatus = "PENDING" | "COMPLETED" | "FAILED" | "CANCELLED" | "REFUNDED";
 
+export type PaymentProvider = "STRIPE" | "SSLCOMMERZ";
+
+export type PaymentMethod = "CARD" | "BKASH" | "NAGAD";
+
 interface NamedRef {
   id: string;
   name: string;
@@ -69,6 +73,8 @@ export interface ComplaintPayment {
   id: string;
   amount: string;
   currency: string;
+  provider: PaymentProvider;
+  method: PaymentMethod;
   status: PaymentStatus;
   paidAt: string | null;
   refundedAt: string | null;

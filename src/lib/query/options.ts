@@ -25,6 +25,7 @@ import type {
   MapComplaint,
   NearbyReport,
   Payment,
+  PaymentMethods,
   PublicReport,
   PublicStats,
   StaffStats,
@@ -61,6 +62,7 @@ export const queryKeys = {
   tracking: (code: string) => ["tracking", code] as const,
   payments: ["payments"] as const,
   paymentList: (filters: PaymentFilters) => ["payments", "list", filters] as const,
+  paymentMethods: ["payment-methods"] as const,
   stats: ["stats"] as const,
   myStats: ["stats", "me"] as const,
   adminStats: ["stats", "admin"] as const,
@@ -171,6 +173,12 @@ export const paymentQueries = {
       queryKey: queryKeys.paymentList(filters),
       queryFn: () => fetcher.list<Payment>("/payments", { ...filters, limit: PAGE_SIZE }),
       placeholderData: keepPreviousData,
+    }),
+  methods: (fetcher: Fetcher = clientFetcher) =>
+    queryOptions({
+      queryKey: queryKeys.paymentMethods,
+      queryFn: () => fetcher.get<PaymentMethods>("/payments/methods"),
+      staleTime: 5 * 60 * 1000,
     }),
 };
 

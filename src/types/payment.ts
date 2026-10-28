@@ -1,12 +1,15 @@
-import type { ComplaintPaymentStatus, ComplaintStatus, PaymentStatus } from "./complaint";
+import type { ComplaintPaymentStatus, ComplaintStatus, PaymentMethod, PaymentProvider, PaymentStatus } from "./complaint";
 
 export interface Payment {
   id: string;
   amount: string;
   currency: string;
-  provider: "STRIPE";
+  provider: PaymentProvider;
+  method: PaymentMethod;
   status: PaymentStatus;
   transactionId: string;
+  chargedAmount: string | null;
+  chargedCurrency: string | null;
   paidAt: string | null;
   refundedAt: string | null;
   createdAt: string;
@@ -31,4 +34,17 @@ export interface CheckoutResult {
 export interface PaymentCheck {
   paid: boolean;
   payment: Payment;
+}
+
+export interface PaymentMethodOption {
+  method: PaymentMethod;
+  label: string;
+  provider: PaymentProvider;
+  available: boolean;
+  testMode: boolean;
+}
+
+export interface PaymentMethods {
+  currency: string;
+  methods: PaymentMethodOption[];
 }
