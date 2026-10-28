@@ -91,12 +91,17 @@ jobs:
       INTERNAL_API_KEY: ci-e2e-internal-key
       API_URL: http://localhost:5000/api/v1
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    defaults:
+      run:
+        working-directory: web
     steps:
       - uses: actions/checkout@v7
+        with:
+          path: web
       - uses: actions/checkout@v7
         with:
           repository: ebrahim2355/citycare-backend
-          path: backend
+          path: api
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.3
@@ -104,8 +109,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+          cache-dependency-path: web/package-lock.json
       - name: Start the CityCare API with seeded demo data
-        working-directory: backend
+        working-directory: api
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/citycare
           REDIS_URL: redis://localhost:6379
@@ -139,8 +145,8 @@ jobs:
         with:
           name: playwright-report
           path: |
-            playwright-report
-            test-results
-            backend/api.log
-            web.log
+            web/playwright-report
+            web/test-results
+            api/api.log
+            web/web.log
           retention-days: 7
