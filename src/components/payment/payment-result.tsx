@@ -4,7 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CircleCheck, Clock, FileSearch, ReceiptText, RotateCcw, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
+import { PaymentMethodLabel } from "@/components/payment/payment-method-mark";
 import { BrandLoader } from "@/components/shared/brand-loader";
 import { ErrorState } from "@/components/shared/error-state";
 import { Button } from "@/components/ui/button";
@@ -13,17 +14,46 @@ import { Spinner } from "@/components/ui/spinner";
 import { useCheckout } from "@/hooks/use-checkout";
 import { api } from "@/lib/api/client";
 import { formatDateTime, formatMoney } from "@/lib/format";
+import { PAYMENT_METHOD_META, SSL_TRANSACTION_PATTERN, STRIPE_SESSION_PATTERN } from "@/lib/payment-methods";
 import { queryKeys } from "@/lib/query/options";
 import type { Payment, PaymentCheck } from "@/types";
 
-const SESSION_PATTERN = /^cs_(test|live)_[A-Za-z0-9]+$/;
 const MAX_CHECKS = 6;
 
+interface PaymentReference {
+  key: string;
+  provider: "Stripe" | "SSLCommerz";
+  verifyBody: { sessionId: string } | { tranId: string };
+  query: { session_id: string } | { tran_id: string };
+}
+
+function usePaymentReference(): PaymentReference | null {
+  const params = useSearchParams();
+  const sessionId = params.get("session_id") ?? "";
+  const tranId = params.get("tran_id") ?? "";
+
+  if (STRIPE_SESSION_PATTERN.test(sessionId)) {
+    return { key: sessionId, provider: "Stripe", verifyBody: { sessionId }, query: { session_id: sessionId } };
+  }
+
+  if (SSL_TRANSACTION_PATTERN.test(tranId)) {
+    return { key: tranId, provider: "SSLCommerz", verifyBody: { tranId }, query: { tran_id: tranId } };
+  }
+
+  return null;
+}
+
 function Receipt({ payment }: { payment: Payment }) {
-  const rows = [
+  const charged =
+    payment.chargedAmount && payment.chargedCurrency && payment.chargedCurrency !== payment.currency
+      ? formatMoney(payment.chargedAmount, payment.chargedCurrency)
+      : null;
+  const rows: { label: string; value: ReactNode; mono?: boolean }[] = [
     { label: "Request", value: payment.complaint.title },
     { label: "Tracking code", value: payment.complaint.trackingCode, mono: true },
     { label: "Service", value: payment.complaint.category.name },
+    { label: "Paid with", value: <PaymentMethodLabel method={payment.method} className="justify-end" /> },
+    ...(charged ? [{ label: "Charged", value: charged, mono: true }] : []),
     { label: "Date", value: formatDateTime(payment.paidAt ?? payment.updatedAt) },
   ];
 
@@ -98,7 +128,7 @@ function MissingSession() {
       icon={<FileSearch className="size-8" />}
       tone="bg-muted text-muted-foreground ring-muted/50"
       title="No payment to show"
-      text="This page opens after a Stripe checkout. Start a payment from your service request."
+      text="This page opens after a card, bKash or Nagad checkout. Start a payment from your service request."
     >
       <Button asChild className="w-full">
         <Link href="/dashboard/complaints?status=PENDING_PAYMENT">See requests waiting for payment</Link>
@@ -108,14 +138,13 @@ function MissingSession() {
 }
 
 export function PaymentSuccess() {
-  const sessionId = useSearchParams().get("session_id") ?? "";
+  const reference = usePaymentReference();
   const queryClient = useQueryClient();
-  const valid = SESSION_PATTERN.test(sessionId);
 
   const check = useQuery({
-    queryKey: ["payment-check", sessionId],
-    queryFn: async () => (await api.post<PaymentCheck>("/payments/verify", { sessionId })).data,
-    enabled: valid,
+    queryKey: ["payment-check", reference?.key],
+    queryFn: async () => (await api.post<PaymentCheck>("/payments/verify", reference?.verifyBody)).data,
+    enabled: Boolean(reference),
     retry: 1,
     refetchInterval: (query) => (query.state.data?.paid || query.state.dataUpdateCount >= MAX_CHECKS ? false : 2000),
   });
@@ -130,7 +159,7 @@ export function PaymentSuccess() {
     }
   }, [paid, queryClient]);
 
-  if (!valid) {
+  if (!reference) {
     return <MissingSession />;
   }
 
@@ -142,7 +171,7 @@ export function PaymentSuccess() {
     return (
       <Card className="mx-auto w-full max-w-lg shadow-raised">
         <CardContent className="py-12">
-          <BrandLoader title="Confirming your payment" description="We are checking with Stripe. This takes a few seconds." />
+          <BrandLoader title="Confirming your payment" description={`We are checking with ${reference.provider}. This takes a few seconds.`} />
         </CardContent>
       </Card>
     );
@@ -156,7 +185,7 @@ export function PaymentSuccess() {
         icon={<Clock className="size-8" />}
         tone="bg-amber-50 text-amber-600 ring-amber-50/60 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/5"
         title="Payment not confirmed yet"
-        text="Stripe has not confirmed the payment. If you finished paying, it usually arrives within a minute."
+        text={`${reference.provider} has not confirmed the payment. If you finished paying, it usually arrives within a minute.`}
       >
         <Receipt payment={payment} />
         <Button className="w-full" onClick={() => check.refetch()} disabled={check.isFetching}>
@@ -191,19 +220,18 @@ export function PaymentSuccess() {
 }
 
 export function PaymentCancelled() {
-  const sessionId = useSearchParams().get("session_id") ?? "";
-  const valid = SESSION_PATTERN.test(sessionId);
+  const reference = usePaymentReference();
   const checkout = useCheckout();
 
   const result = useQuery({
-    queryKey: ["payment-cancel", sessionId],
-    queryFn: async () => (await api.get<PaymentCheck>("/payments/cancel", { session_id: sessionId })).data,
-    enabled: valid,
+    queryKey: ["payment-cancel", reference?.key],
+    queryFn: async () => (await api.get<PaymentCheck>("/payments/cancel", reference?.query)).data,
+    enabled: Boolean(reference),
     retry: 1,
     staleTime: Infinity,
   });
 
-  if (!valid) {
+  if (!reference) {
     return <MissingSession />;
   }
 
@@ -215,13 +243,14 @@ export function PaymentCancelled() {
     return (
       <Card className="mx-auto w-full max-w-lg shadow-raised">
         <CardContent className="py-12">
-          <BrandLoader title="Closing the checkout" description="One moment while we tell Stripe you left." />
+          <BrandLoader title="Closing the checkout" description={`One moment while we check with ${reference.provider}.`} />
         </CardContent>
       </Card>
     );
   }
 
   const { payment, paid } = result.data;
+  const label = PAYMENT_METHOD_META[payment.method].label;
 
   if (paid) {
     return (
@@ -239,21 +268,33 @@ export function PaymentCancelled() {
     );
   }
 
+  const failed = payment.status === "FAILED";
+  const canRetry = payment.complaint.status === "PENDING_PAYMENT";
+
   return (
     <ResultShell
       icon={<XCircle className="size-8" />}
       tone="bg-destructive/10 text-destructive ring-destructive/5"
-      title="Payment cancelled"
-      text="Nothing was charged. Your request is saved and waits for the payment."
+      title={failed ? "Payment failed" : "Payment cancelled"}
+      text={
+        failed
+          ? `${label} did not take the payment, so nothing was charged. Your request is saved and waits for the payment.`
+          : "Nothing was charged. Your request is saved and waits for the payment."
+      }
     >
       <Receipt payment={payment} />
       <div className="grid gap-2 sm:grid-cols-2">
-        <Button onClick={() => checkout.mutate(payment.complaint.id)} disabled={checkout.isPending || checkout.isSuccess}>
-          {checkout.isPending || checkout.isSuccess ? <Spinner /> : <RotateCcw data-icon="inline-start" />}
-          Try again
-        </Button>
-        <Button asChild variant="outline">
-          <Link href={`/dashboard/complaints/${payment.complaint.id}`}>Open the request</Link>
+        {canRetry && (
+          <Button
+            onClick={() => checkout.mutate({ complaintId: payment.complaint.id, method: payment.method })}
+            disabled={checkout.isPending || checkout.isSuccess}
+          >
+            {checkout.isPending || checkout.isSuccess ? <Spinner /> : <RotateCcw data-icon="inline-start" />}
+            Try {label} again
+          </Button>
+        )}
+        <Button asChild variant="outline" className={canRetry ? undefined : "sm:col-span-2"}>
+          <Link href={`/dashboard/complaints/${payment.complaint.id}`}>{canRetry ? "Pay another way" : "Open the request"}</Link>
         </Button>
       </div>
     </ResultShell>
