@@ -11,14 +11,14 @@ import type { ComplaintDetail } from "@/types";
 
 function Fact({ icon: Icon, label, children, tone }: { icon: typeof Tag; label: string; children: ReactNode; tone?: "danger" }) {
   return (
-    <div className="flex items-start gap-3">
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-        <Icon className="size-4" aria-hidden />
-      </span>
-      <div className="min-w-0">
-        <dt className="text-xs text-muted-foreground">{label}</dt>
-        <dd className={cn("text-sm font-medium break-words", tone === "danger" && "text-destructive")}>{children}</dd>
-      </div>
+    <div className="relative min-h-8 min-w-0 pl-11">
+      <dt className="text-xs text-muted-foreground">
+        <span className="absolute top-0 left-0 flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+          <Icon className="size-4" aria-hidden />
+        </span>
+        {label}
+      </dt>
+      <dd className={cn("text-sm font-medium break-words", tone === "danger" && "text-destructive")}>{children}</dd>
     </div>
   );
 }
