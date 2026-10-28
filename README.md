@@ -31,7 +31,7 @@ The login page has one-click demo buttons for every role. You can also type the 
 | Field staff (Roads & Transport) | roads.staff@citycare.com | Staff12345 |
 | Citizen | citizen@citycare.com | Citizen12345 |
 
-Stripe runs in test mode. Pay with the card `4242 4242 4242 4242`, any future date and any CVC.
+Payments run in test mode. Pay by card with `4242 4242 4242 4242`, any future date and any CVC, or pick bKash or Nagad and press **Success** on the SSLCommerz sandbox page.
 
 ## Highlights
 
@@ -41,7 +41,7 @@ Stripe runs in test mode. Pay with the card `4242 4242 4242 4242`, any future da
 - **Notifications and messages.** An in-app inbox with an unread badge and toasts, and a message thread on every report with internal notes that only the city team sees.
 - **Deadlines that escalate.** A report that misses its deadline is flagged, raised in priority and shown with a badge to the team.
 - **Secure by default.** Tokens stay in HTTP-only cookies behind a backend-for-frontend route, with a strict Content Security Policy, safe redirects and a reference id on every error.
-- **Tested like a product.** 98 unit tests and 40 Playwright end-to-end tests run on every push. They cover the whole report journey against the real API, accessibility audits with axe and a phone layout.
+- **Tested like a product.** 104 unit tests and 46 Playwright end-to-end tests run on every push. They cover the whole report journey against the real API, accessibility audits with axe and a phone layout.
 - **Ready to ship.** GitHub Actions CI, a small Docker image from the standalone build, and Dependabot.
 
 ## Screenshots
@@ -61,7 +61,7 @@ Stripe runs in test mode. Pay with the card `4242 4242 4242 4242`, any future da
 
 | Role | What they can do |
 | --- | --- |
-| **Citizen** | Report a problem in a five step wizard with photos and a pin on the map, support a report nearby instead of sending it again, pay for home services with Stripe, follow the timeline, message the crew, edit or cancel before assignment, rate the work, reopen within 7 days and get a notification at every step |
+| **Citizen** | Report a problem in a five step wizard with photos and a pin on the map, support a report nearby instead of sending it again, pay for home services by card, bKash or Nagad, follow the timeline, message the crew, edit or cancel before assignment, rate the work, reopen within 7 days and get a notification at every step |
 | **Field staff** | See jobs sorted by deadline and on a map, start and resolve them with a note and proof photos, leave internal notes for the city team, see performance charts and pause new jobs while on leave |
 | **City admin** | Watch the live overview and the city map, assign by workload or by hand, move reports between departments, reject with an automatic refund, run the deadline check, export complaints and payments as CSV, manage users, departments, categories and fees, answer contact messages and read the audit log |
 
@@ -89,7 +89,7 @@ Stripe runs in test mode. Pay with the card `4242 4242 4242 4242`, any future da
 | Forms | React Hook Form with Zod, the same rules as the API |
 | Charts | Recharts through the shadcn chart component |
 | Auth | JWT access and refresh tokens in HTTP-only cookies, verified with jose in the proxy |
-| Payments | Stripe Checkout (test mode) |
+| Payments | Stripe Checkout for cards, SSLCommerz for bKash and Nagad (test mode) |
 | Images | next/image with a Cloudinary loader |
 | Testing | Vitest, Testing Library, Playwright, axe-core |
 | Delivery | GitHub Actions, Docker, Vercel, Dependabot |
@@ -106,7 +106,9 @@ flowchart LR
     API --> Postgres[(PostgreSQL)]
     API --> Redis[(Redis)]
     Browser -->|map tiles| OSM[OpenStreetMap]
-    Browser -->|checkout| Stripe
+    Browser -->|card| Stripe
+    Browser -->|bKash, Nagad| SSLCommerz
+    SSLCommerz -->|return and IPN| API
 ```
 
 ### Auth and route protection
@@ -150,7 +152,12 @@ flowchart LR
 
 ### Payments
 
-A paid service request is created, then the frontend asks the API for a Stripe Checkout session and redirects to Stripe. Stripe sends the citizen back to `/payment/success` or `/payment/cancel`. The success page confirms the payment with the API, and the cancel page closes the checkout and offers a new try. If an admin rejects a paid request, the API refunds it automatically.
+The citizen picks how to pay: card (Stripe Checkout), bKash or Nagad (SSLCommerz). The picker asks the API which methods are set up and turns off the ones that are not. It sits on the request page and in the last step of the wizard, which keeps the choice in its draft.
+
+- **Card:** the frontend asks the API for a Stripe Checkout session and redirects to Stripe. Stripe sends the citizen back to `/payment/success?session_id=...` or `/payment/cancel?session_id=...`.
+- **bKash and Nagad:** the API opens an SSLCommerz session and returns the link of the chosen wallet. SSLCommerz posts the result to the API, which checks it with the SSLCommerz validation API and then redirects the citizen to `/payment/success?tran_id=...` or `/payment/cancel?tran_id=...`.
+
+The success page confirms the payment with the API and shows a receipt with the method and, for the wallets, the amount charged in taka. The cancel page closes the checkout, tells a failed payment from a cancelled one and offers to try the same method again or pay another way. The payment history shows the method of every payment and filters by it. If an admin rejects a paid request, the API refunds it automatically to the same card or wallet.
 
 ### Errors and security
 
@@ -174,8 +181,8 @@ A paid service request is created, then the frontend asks the API for a Stripe C
 
 | Suite | Tools | What it covers |
 | --- | --- | --- |
-| Unit (98 tests) | Vitest, Testing Library, jsdom | Validation rules, safe redirects, URL filters, the API client and its errors, formatting, map helpers, notification links and shared components |
-| End to end (40 tests) | Playwright, axe-core | Sign in for every role, the full journey of a report (a citizen reports and pins it, an admin assigns it, staff resolve it, the citizen is notified and rates it), community support and duplicate hints, CSV exports and the deadline check, public pages and security headers, accessibility of the main pages and map popups, and a phone layout |
+| Unit (104 tests) | Vitest, Testing Library, jsdom | Validation rules, safe redirects, URL filters, the API client and its errors, formatting, map helpers, notification links, the payment method picker and shared components |
+| End to end (46 tests) | Playwright, axe-core | Sign in for every role, the full journey of a report (a citizen reports and pins it, an admin assigns it, staff resolve it, the citizen is notified and rates it), community support and duplicate hints, CSV exports and the deadline check, bKash and Nagad payments in the SSLCommerz sandbox, public pages and security headers, accessibility of the main pages, the payment picker and map popups, and a phone layout |
 
 ```bash
 npm test                    # unit tests
@@ -204,7 +211,7 @@ Start the [backend stack](https://github.com/ebrahim2355/citycare-backend#run-it
 docker compose up -d --build
 ```
 
-Open http://localhost:3000. The web container joins the same network and uses the same local secrets as the API by default. Payments need Stripe keys in the backend, and Google sign in needs the Node.js setup below, because the browser has to reach the API directly.
+Open http://localhost:3000. The web container joins the same network and uses the same local secrets as the API by default. Card payments need Stripe keys and bKash and Nagad need an SSLCommerz store in the backend, and Google sign in needs the Node.js setup below, because the browser has to reach the API directly.
 
 ### With Node.js
 
@@ -261,7 +268,7 @@ src
 │   │   ├── dashboard     citizen pages
 │   │   ├── staff         staff pages
 │   │   └── admin         admin pages
-│   ├── payment           Stripe success and cancel
+│   ├── payment           success and cancel pages for Stripe and SSLCommerz
 │   └── api               auth route handlers and the backend proxy route
 ├── components            ui (shadcn), map, community, notifications, complaints, dashboard, charts, layout, shared
 ├── hooks                 session, url filters, mutations, uploads, checkout, notifications
