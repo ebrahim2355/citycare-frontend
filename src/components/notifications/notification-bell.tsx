@@ -68,7 +68,7 @@ export function NotificationBell({ role }: { role: Role }) {
           {Boolean(unread) && (
             <span
               aria-hidden
-              className="absolute -top-0.5 -right-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-background">
+              className="absolute -top-0.5 -right-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-background dark:text-background">
               {badgeCount(unread ?? 0)}
             </span>
           )}
